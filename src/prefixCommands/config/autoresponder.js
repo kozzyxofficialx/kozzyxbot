@@ -1,12 +1,12 @@
 import { PermissionsBitField } from "discord.js";
 import { guildAutoresponders, saveAutoresponders } from "../../utils/database.js";
-import { replyEmbed } from "../../utils/embeds.js";
+import { replyEmbed, permissionError } from "../../utils/embeds.js";
 
 export default {
     name: "autoresponder",
     async execute(message, args) {
         if (!message.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
-            return replyEmbed(message, { type: "error", title: "⛔ Permission Needed", description: "You need **Manage Messages** to edit autoresponders." });
+            return permissionError(message, "You need **Manage Messages** to edit autoresponders.");
         }
         const sub = (args.shift() || "").toLowerCase();
         const list = guildAutoresponders.get(message.guild.id) || [];

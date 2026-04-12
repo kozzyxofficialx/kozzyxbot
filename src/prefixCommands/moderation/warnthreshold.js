@@ -1,12 +1,12 @@
 import { PermissionsBitField } from "discord.js";
 import { getGuildSettings, saveSettings } from "../../utils/database.js";
-import { replyEmbed } from "../../utils/embeds.js";
+import { replyEmbed, permissionError } from "../../utils/embeds.js";
 
 export default {
     name: "warnthreshold",
     async execute(message, args) {
         if (!message.member.permissions.has(PermissionsBitField.Flags.ModerateMembers)) {
-            return replyEmbed(message, { type: "error", title: "⛔ Permission Needed", description: "You need **Timeout Members** permission." });
+            return permissionError(message, "You need **Timeout Members** permission.");
         }
         const sub = (args[0] || "").toLowerCase();
         const settings = getGuildSettings(message.guild.id);

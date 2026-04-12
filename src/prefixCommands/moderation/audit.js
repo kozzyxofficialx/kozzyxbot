@@ -1,5 +1,5 @@
 import { PermissionsBitField, AuditLogEvent } from "discord.js";
-import { replyEmbed } from "../../utils/embeds.js";
+import { replyEmbed, permissionError } from "../../utils/embeds.js";
 import { getGuildSettings } from "../../utils/database.js";
 import { getDB } from "../../utils/db.js";
 
@@ -18,7 +18,7 @@ export default {
     async execute(message, args) {
         if (!message.guild) return;
         if (!message.member.permissions.has(PermissionsBitField.Flags.ViewAuditLog)) {
-            return replyEmbed(message, { type: "error", title: "⛔ Permission Denied", description: "You need **View Audit Log**." });
+            return permissionError(message, "You need **View Audit Log**.");
         }
         const settings = getGuildSettings(message.guild.id);
         if (!settings.plugins?.audit_log) {

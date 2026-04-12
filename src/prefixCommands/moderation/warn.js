@@ -1,6 +1,6 @@
 import { PermissionsBitField } from "discord.js";
 import { getWarningData, saveWarnings, getGuildSettings } from "../../utils/database.js";
-import { replyEmbed, postCase, caseEmbed, sendEmbed } from "../../utils/embeds.js";
+import { replyEmbed, postCase, caseEmbed, sendEmbed, permissionError } from "../../utils/embeds.js";
 import { trySendModDM } from "../../utils/moderationUtils.js";
 
 const WARN_THRESHOLD_EMOJIS = ["⚠️", "🚨", "🔥", "🛑", "⚡"];
@@ -24,7 +24,7 @@ export default {
     name: "warn",
     async execute(message, args) {
         if (!message.member.permissions.has(PermissionsBitField.Flags.ModerateMembers)) {
-            return replyEmbed(message, { type: "error", title: "⛔ Permission Needed", description: "You need **Timeout Members** permission to warn." });
+            return permissionError(message, "You need **Timeout Members** permission to warn.");
         }
         const target = message.mentions.members.first();
         if (!target) return replyEmbed(message, { type: "error", title: "❌ Usage", description: "`,warn @user [reason]` OR `,warn remove @user [count]`" });

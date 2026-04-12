@@ -1,13 +1,13 @@
 import { PermissionsBitField } from "discord.js";
 import { getGuildSettings, saveSettings } from "../../utils/database.js";
-import { replyEmbed } from "../../utils/embeds.js";
+import { replyEmbed, permissionError } from "../../utils/embeds.js";
 import { buildTicketPanelEmbed, buildTicketPanelComponents } from "../../utils/ticketUtils.js";
 
 export default {
     name: "ticket_channel",
     async execute(message, args) {
         if (!message.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
-            return replyEmbed(message, { type: "error", title: "⛔ Permission Needed", description: "You need **Manage Server** to set the ticket panel channel." });
+            return permissionError(message, "You need **Manage Server** to set the ticket panel channel.");
         }
         const ch = message.mentions.channels.first();
         if (!ch || !ch.isTextBased()) return replyEmbed(message, { type: "error", title: "❌ Usage", description: "`,ticket_channel #channel`" });

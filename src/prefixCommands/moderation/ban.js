@@ -1,12 +1,12 @@
 import { PermissionsBitField } from "discord.js";
 import { doBan } from "../../utils/moderationUtils.js";
-import { replyEmbed } from "../../utils/embeds.js";
+import { replyEmbed, permissionError } from "../../utils/embeds.js";
 
 export default {
     name: "ban",
     async execute(message, args) {
         if (!message.member.permissions.has(PermissionsBitField.Flags.BanMembers)) {
-            return replyEmbed(message, { type: "error", title: "⛔ Permission Needed", description: "You need **Ban Members** permission." });
+            return permissionError(message, "You need **Ban Members** permission.");
         }
         const target = message.mentions.users.first();
         const reason = args.filter(a => !a.match(/^<@!?\d+>$/)).join(" ") || "No reason provided.";

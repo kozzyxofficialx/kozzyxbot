@@ -1,5 +1,5 @@
 import { PermissionsBitField } from "discord.js";
-import { replyEmbed } from "../../utils/embeds.js";
+import { replyEmbed, permissionError } from "../../utils/embeds.js";
 import { getGuildSettings, saveSettings } from "../../utils/database.js";
 
 export default {
@@ -8,7 +8,7 @@ export default {
     async execute(message) {
         if (!message.guild) return;
         if (!message.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
-            return replyEmbed(message, { type: "error", title: "⛔ Permission Denied", description: "You need **Manage Server**." });
+            return permissionError(message, "You need **Manage Server**.");
         }
         const channel = message.mentions.channels.first();
         if (!channel) return replyEmbed(message, { type: "error", title: "❌ Usage", description: "`,appealschannel #channel`" });

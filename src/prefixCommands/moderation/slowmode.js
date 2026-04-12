@@ -1,11 +1,11 @@
 import { PermissionsBitField } from "discord.js";
-import { replyEmbed } from "../../utils/embeds.js";
+import { replyEmbed, permissionError } from "../../utils/embeds.js";
 
 export default {
     name: "slowmode",
     async execute(message, args) {
         if (!message.member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
-            return replyEmbed(message, { type: "error", title: "⛔ Permission Needed", description: "You need **Manage Channels** to change slowmode." });
+            return permissionError(message, "You need **Manage Channels** to change slowmode.");
         }
         const targetChannel = message.mentions.channels.first() || message.channel;
         if (!targetChannel || !targetChannel.isTextBased()) return replyEmbed(message, { type: "error", title: "❌ Error", description: "Slowmode can only be set on text channels." });

@@ -1,12 +1,12 @@
 import { PermissionsBitField } from "discord.js";
 import { getGuildSettings, saveSettings } from "../../utils/database.js";
-import { replyEmbed } from "../../utils/embeds.js";
+import { replyEmbed, permissionError } from "../../utils/embeds.js";
 
 export default {
     name: "ticket_edit",
     async execute(message, args) {
         if (!message.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
-            return replyEmbed(message, { type: "error", title: "⛔ Permission Needed", description: "You need **Manage Server** to edit the ticket panel." });
+            return permissionError(message, "You need **Manage Server** to edit the ticket panel.");
         }
 
         const sub = (args.shift() || "").toLowerCase();

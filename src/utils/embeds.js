@@ -49,6 +49,23 @@ export async function replyEmbed(message, opts) {
     return message.reply(asEmbedPayload({ guildId: message.guild?.id, footerUser: message.author, client: message.client, ...opts }));
 }
 
+// Sends a permission-denied reply visible only briefly — auto-deletes both
+// the bot reply and the original command message after 7 seconds.
+export async function permissionError(message, description) {
+    const reply = await message.reply(asEmbedPayload({
+        guildId: message.guild?.id,
+        footerUser: message.author,
+        client: message.client,
+        type: "error",
+        title: "⛔ Permission Needed",
+        description,
+    })).catch(() => null);
+    setTimeout(() => {
+        reply?.delete().catch(() => null);
+        message.delete().catch(() => null);
+    }, 7000);
+}
+
 export async function sendEmbed(channel, guildId, opts) {
     return channel.send(asEmbedPayload({ guildId, client: channel.client, ...opts }));
 }

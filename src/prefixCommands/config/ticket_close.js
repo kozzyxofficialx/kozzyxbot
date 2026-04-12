@@ -1,13 +1,13 @@
 import { PermissionsBitField } from "discord.js";
 import { getGuildSettings, saveSettings } from "../../utils/database.js";
-import { replyEmbed } from "../../utils/embeds.js";
+import { replyEmbed, permissionError } from "../../utils/embeds.js";
 import { parseDurationToMs } from "../../utils/helpers.js";
 
 export default {
     name: "ticket_close",
     async execute(message, args) {
         if (!message.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
-            return replyEmbed(message, { type: "error", title: "⛔ Permission Needed", description: "You need **Manage Server** to change ticket auto-close." });
+            return permissionError(message, "You need **Manage Server** to change ticket auto-close.");
         }
         const t = args[0];
         const ms = parseDurationToMs(t);
