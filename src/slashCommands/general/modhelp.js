@@ -91,9 +91,11 @@ modHelpPages.push(
         .setTitle("🔧 Moderator Help (6/6)")
         .setDescription(
             "🛡️ AutoMod Rules\n\n" +
-            "`,automod list` – View all rules and their on/off status.\n" +
+            "`,automod list` – View all rules, strike limit, and sensitivity.\n" +
             "`,automod <rule> on|off` – Enable or disable a rule.\n" +
-            "Rules: `invite_links` · `mass_mentions` · `spam` · `caps`\n\n" +
+            "Rules: `invite_links` · `mass_mentions` · `spam` · `caps`\n" +
+            "`,automod set strike_limit <1–10>` – Strikes before timeout.\n" +
+            "`,automod set sensitivity <low|medium|high>` – Detection level.\n\n" +
             "🚫 AutoMod Whitelist\n\n" +
             "`,automod_whitelist <word>` – Whitelist a word (bypasses automod).\n" +
             "`,automod_whitelist remove <word>` – Remove from whitelist.\n" +
