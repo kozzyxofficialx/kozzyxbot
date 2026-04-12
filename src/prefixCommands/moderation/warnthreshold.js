@@ -21,9 +21,11 @@ export default {
             if (action === "timeout" && (!Number.isFinite(time) || time <= 0)) return replyEmbed(message, { type: "error", title: "❌ Invalid", description: "Timeout minutes required." });
 
             settings.warnThresholds = settings.warnThresholds || [];
+            const exists = settings.warnThresholds.some(t => t.count === count);
+            if (exists) return replyEmbed(message, { type: "info", title: "ℹ️ Already Exists", description: `A warn threshold at **${count}** warnings already exists. Remove it first to replace.` });
             settings.warnThresholds.push({ count, action, time });
             await saveSettings();
-            return replyEmbed(message, { type: "settings", title: "✅ Threshold Added", description: "Warn threshold added." });
+            return replyEmbed(message, { type: "settings", title: "✅ Threshold Added", description: `Warn threshold added: **${count}** warnings → **${action}**${action === "timeout" ? ` (${time}m)` : ""}.` });
         }
 
         if (sub === "remove") {

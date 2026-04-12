@@ -231,7 +231,7 @@ export function buildTicketPanelEmbed(guildId) {
     const settings = getGuildSettings(guildId);
     return {
         title: settings.ticket?.panelTitle || "🎫 Support Tickets",
-        description: settings.ticket?.panelDescription || "Click the button below to open a ticket.",
+        description: settings.ticket?.panelText || "Click the button below to open a ticket.",
         color: settings.embedColors?.ticket || 0x57F287,
     };
 }
@@ -243,13 +243,14 @@ export function buildTicketPanelComponents(guildId) {
         { id: "report", label: "Report User" }
     ];
 
+    const styleMap = { Primary: ButtonStyle.Primary, Secondary: ButtonStyle.Secondary, Success: ButtonStyle.Success, Danger: ButtonStyle.Danger };
     const row = new ActionRowBuilder();
     categories.slice(0, 5).forEach(cat => {
         row.addComponents(
             new ButtonBuilder()
                 .setCustomId(`ticket_open_${cat.id}`)
                 .setLabel(cat.label)
-                .setStyle(ButtonStyle.Primary)
+                .setStyle(styleMap[cat.style] || ButtonStyle.Primary)
         );
     });
 

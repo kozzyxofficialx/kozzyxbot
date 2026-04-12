@@ -9,6 +9,9 @@ export default {
             return replyEmbed(message, { type: "error", title: "⛔ Permission Needed", description: "You need **Manage Server** to change this." });
         }
         const settings = getGuildSettings(message.guild.id);
+        if (settings.autoresponderFilterOn === true) {
+            return replyEmbed(message, { type: "info", title: "ℹ️ Already Enabled", description: "Autoresponder filter is already **ON**." });
+        }
         settings.autoresponderFilterOn = true;
         await saveSettings();
         return replyEmbed(message, { type: "settings", title: "✅ Filter Enabled", description: "Autoresponder filter is now **ON**." });

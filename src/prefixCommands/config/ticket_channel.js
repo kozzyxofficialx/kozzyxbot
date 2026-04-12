@@ -27,6 +27,9 @@ export default {
             return replyEmbed(message, { type: "error", title: "❌ Usage", description: "` ,ticket_channel #channel`" });
         }
         const settings = getGuildSettings(message.guild.id);
+        if (settings.ticketPanelChannelId === ch.id) {
+            return replyEmbed(message, { type: "info", title: "ℹ️ Already Set", description: `Ticket panel channel is already set to ${ch}.` });
+        }
         settings.ticketPanelChannelId = ch.id;
         await saveSettings();
 

@@ -15,6 +15,9 @@ export default {
             return replyEmbed(message, { type: "error", title: "❌ Usage", description: "` ,ticket_close <30m|2h|1d|off>`" });
         }
         const settings = getGuildSettings(message.guild.id);
+        if (settings.ticket.autoCloseMs === ms) {
+            return replyEmbed(message, { type: "info", title: "ℹ️ Already Set", description: ms === 0 ? "Ticket auto-close is already **disabled**." : `Ticket auto-close is already set to **${t}**.` });
+        }
         settings.ticket.autoCloseMs = ms;
         await saveSettings();
         return replyEmbed(message, {

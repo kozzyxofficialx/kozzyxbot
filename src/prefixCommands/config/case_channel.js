@@ -17,6 +17,9 @@ export default {
             return replyEmbed(message, { type: "error", title: "❌ Usage", description: "` ,case_channel #channel`" });
         }
         const settings = getGuildSettings(message.guild.id);
+        if (settings.caseChannelId === ch.id) {
+            return replyEmbed(message, { type: "info", title: "ℹ️ Already Set", description: `Case channel is already set to ${ch}.` });
+        }
         settings.caseChannelId = ch.id;
         await saveSettings();
         return replyEmbed(message, {

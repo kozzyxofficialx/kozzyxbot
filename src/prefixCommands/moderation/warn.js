@@ -71,7 +71,7 @@ export default {
             });
         }
 
-        const reason = args.join(" ") || "No reason provided.";
+        const reason = args.filter(a => !a.match(/^<@!?\d+>$/)).join(" ") || "No reason provided.";
         const data = getWarningData(message.guild.id, target.id);
         data.count++;
         data.history.push({ action: "add", by: message.author.id, reason, at: Date.now() });

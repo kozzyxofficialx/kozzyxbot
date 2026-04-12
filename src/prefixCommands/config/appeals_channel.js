@@ -17,6 +17,9 @@ export default {
         }
 
         const settings = getGuildSettings(message.guild.id);
+        if (settings.appealsChannelId === channel.id) {
+            return replyEmbed(message, { type: "info", title: "ℹ️ Already Set", description: `Appeals channel is already set to <#${channel.id}>.` });
+        }
         settings.appealsChannelId = channel.id;
         await saveSettings();
 

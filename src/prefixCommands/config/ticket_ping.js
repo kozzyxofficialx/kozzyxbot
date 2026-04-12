@@ -13,6 +13,9 @@ export default {
             return replyEmbed(message, { type: "error", title: "❌ Usage", description: "` ,ticket_ping @role`" });
         }
         const settings = getGuildSettings(message.guild.id);
+        if (settings.ticket.displayRoleId === role.id) {
+            return replyEmbed(message, { type: "info", title: "ℹ️ Already Set", description: `Ticket display role is already set to **@${role.name}**.` });
+        }
         settings.ticket.displayRoleId = role.id;
         await saveSettings();
         return replyEmbed(message, {

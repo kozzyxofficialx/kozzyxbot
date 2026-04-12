@@ -9,6 +9,9 @@ export default {
 
         const settings = getGuildSettings(message.guild.id);
         settings.nickLocks = settings.nickLocks || {};
+        if (settings.nickLocks[target.id]) {
+            return replyEmbed(message, { type: "info", title: "ℹ️ Already Locked", description: `**${target.user.tag}**'s nickname is already locked.` });
+        }
         settings.nickLocks[target.id] = target.nickname || target.user.username;
         await saveSettings();
         return replyEmbed(message, { type: "settings", title: "🔒 Nickname Locked", description: `Locked nickname for **${target.user.tag}**.` });
