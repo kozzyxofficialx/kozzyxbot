@@ -45,23 +45,22 @@ export function asEmbedPayload({ guildId, type, client, title, description, foot
 }
 
 export async function replyEmbed(message, opts) {
-    return message.reply(asEmbedPayload({ guildId: message.guild?.id, footerUser: message.author, client: message.client, ...opts }));
+    const reply = await message.reply(asEmbedPayload({ guildId: message.guild?.id, footerUser: message.author, client: message.client, ...opts }));
+    if (message.guild && reply) {
+        const settings = getGuildSettings(message.guild.id);
+        const delaySec = settings.prefixDeleteCooldown ?? 3;
+        if (delaySec !== false && delaySec > 0) {
+            setTimeout(() => {
+                reply.delete().catch(() => null);
+                message.delete().catch(() => null);
+            }, delaySec * 1000);
+        }
+    }
+    return reply;
 }
 
-// Permission errors auto-delete after 7s so they don't clutter the channel.
 export async function permissionError(message, description) {
-    const reply = await message.reply(asEmbedPayload({
-        guildId: message.guild?.id,
-        footerUser: message.author,
-        client: message.client,
-        type: "error",
-        title: "⛔ Permission Needed",
-        description,
-    })).catch(() => null);
-    setTimeout(() => {
-        reply?.delete().catch(() => null);
-        message.delete().catch(() => null);
-    }, 7000);
+    return replyEmbed(message, { type: "error", title: "⛔ Permission Needed", description });
 }
 
 export async function sendEmbed(channel, guildId, opts) {
