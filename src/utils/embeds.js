@@ -44,26 +44,26 @@ export function asEmbedPayload({ guildId, type, client, title, description, foot
     };
 }
 
+// All prefix command replies go to the user's DMs (private) and the command
+// message is deleted. If DMs are closed, falls back to a 10-second auto-delete.
 export async function replyEmbed(message, opts) {
-    // opts: { type, title, description, fields, client }
-    return message.reply(asEmbedPayload({ guildId: message.guild?.id, footerUser: message.author, client: message.client, ...opts }));
+    const payload = asEmbedPayload({ guildId: message.guild?.id, footerUser: message.author, client: message.client, ...opts });
+    message.delete().catch(() => null);
+    const dmSent = await message.author.send(payload).catch(() => null);
+    if (!dmSent) {
+        // DMs closed — send in channel and auto-delete after 10s
+        const msg = await message.channel.send(payload).catch(() => null);
+        if (msg) setTimeout(() => msg.delete().catch(() => null), 10000);
+    }
 }
 
-// Sends a permission-denied reply visible only briefly — auto-deletes both
-// the bot reply and the original command message after 7 seconds.
+// Permission errors: same DM-based behaviour (reuses replyEmbed logic above).
 export async function permissionError(message, description) {
-    const reply = await message.reply(asEmbedPayload({
-        guildId: message.guild?.id,
-        footerUser: message.author,
-        client: message.client,
+    return replyEmbed(message, {
         type: "error",
         title: "⛔ Permission Needed",
         description,
-    })).catch(() => null);
-    setTimeout(() => {
-        reply?.delete().catch(() => null);
-        message.delete().catch(() => null);
-    }, 7000);
+    });
 }
 
 export async function sendEmbed(channel, guildId, opts) {
