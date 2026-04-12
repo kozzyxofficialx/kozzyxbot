@@ -34,10 +34,16 @@ jobs:
             node src/deploy-guild.js || true
 
             echo "==> Restarting bot via pm2..."
-            timeout 60 pm2 restart KozzyX --update-env || timeout 60 pm2 start index.js --name KozzyX || true
-            timeout 15 pm2 save || true
+            nohup pm2 restart KozzyX --update-env > /tmp/pm2-restart.log 2>&1 &
+            sleep 5
+            cat /tmp/pm2-restart.log || true
+            nohup pm2 save --force > /dev/null 2>&1 &
+            sleep 2
 
             echo "==> PM2 status:"
             pm2 list
+
+            echo "==> Recent bot logs:"
+            pm2 logs KozzyX --lines 20 --nostream || true
 
             echo "==> Done! Bot is back online."
