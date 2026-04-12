@@ -2,14 +2,15 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from "disc
 import { safeRespond } from "../../utils/helpers.js";
 
 export const modHelpPages = [];
+
 modHelpPages.push(
     new EmbedBuilder()
-        .setTitle("🔧 Moderator Help (1/5)")
+        .setTitle("🔧 Moderator Help (1/6)")
         .setDescription(
             "🔧 Moderation\n\n" +
             "`,kick @user [reason]` – Kick a user.\n" +
             "`,ban @user [reason]` – Ban a user.\n" +
-            "`,damage @user <time>` – Timeout a user (e.g. 10m, 1h).\n" +
+            "`,damage @user <time> [reason]` – Timeout a user (e.g. 10m, 1h).\n" +
             "`,heal @user` – Remove a timeout.\n\n" +
             "🧾 Cases & Audit\n\n" +
             "`,case_channel #channel` – Set where moderation cases are posted.\n" +
@@ -17,9 +18,10 @@ modHelpPages.push(
         )
         .setColor(0xed4245)
 );
+
 modHelpPages.push(
     new EmbedBuilder()
-        .setTitle("🔧 Moderator Help (2/5)")
+        .setTitle("🔧 Moderator Help (2/6)")
         .setDescription(
             "🎫 Tickets\n\n" +
             "`,ticket_channel #channel` – Set ticket panel channel.\n" +
@@ -30,9 +32,10 @@ modHelpPages.push(
         )
         .setColor(0xed4245)
 );
+
 modHelpPages.push(
     new EmbedBuilder()
-        .setTitle("🔧 Moderator Help (3/5)")
+        .setTitle("🔧 Moderator Help (3/6)")
         .setDescription(
             "🤖 Autoresponders\n\n" +
             "`,autoresponder add <trigger> <response>`\n" +
@@ -45,9 +48,10 @@ modHelpPages.push(
         )
         .setColor(0xed4245)
 );
+
 modHelpPages.push(
     new EmbedBuilder()
-        .setTitle("🔧 Moderator Help (4/5)")
+        .setTitle("🔧 Moderator Help (4/6)")
         .setDescription(
             "⚠️ Warnings / Thresholds\n\n" +
             "`,warn @user [reason]` – Warn a user.\n" +
@@ -60,9 +64,10 @@ modHelpPages.push(
         )
         .setColor(0xed4245)
 );
+
 modHelpPages.push(
     new EmbedBuilder()
-        .setTitle("🔧 Moderator Help (5/5)")
+        .setTitle("🔧 Moderator Help (5/6)")
         .setDescription(
             "🧱 Channel Tools\n\n" +
             "`,lock [#channel] [reason]` – Lock a channel.\n" +
@@ -77,6 +82,24 @@ modHelpPages.push(
             "🎨 Embeds\n\n" +
             "`,embed_<type>_#hex` – Set per-type embed color.\n" +
             "Example: `,embed_ticket_#57F287`"
+        )
+        .setColor(0xed4245)
+);
+
+modHelpPages.push(
+    new EmbedBuilder()
+        .setTitle("🔧 Moderator Help (6/6)")
+        .setDescription(
+            "🛡️ AutoMod Rules\n\n" +
+            "`,automod list` – View all rules and their on/off status.\n" +
+            "`,automod <rule> on|off` – Enable or disable a rule.\n" +
+            "Rules: `invite_links` · `mass_mentions` · `spam` · `caps`\n\n" +
+            "🚫 AutoMod Whitelist\n\n" +
+            "`,automod_whitelist <word>` – Whitelist a word (bypasses automod).\n" +
+            "`,automod_whitelist remove <word>` – Remove from whitelist.\n" +
+            "`,automod_whitelist list` – View all whitelisted words.\n\n" +
+            "⚙️ Bot Settings\n\n" +
+            "`,prefix_delete_respond_cooldown <seconds|off>` – How long before bot responses auto-delete (default: 3s).\n"
         )
         .setColor(0xed4245)
 );
