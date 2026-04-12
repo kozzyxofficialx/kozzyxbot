@@ -115,6 +115,7 @@ export function getGuildSettings(guildId) {
             antiRaid: defaultAntiRaidConfig(),
             dynamicVc: defaultDynamicVcConfig(),
             appealsChannelId: null,
+            automodWhitelist: [],
         };
         serverSettings.set(guildId, s);
     }
