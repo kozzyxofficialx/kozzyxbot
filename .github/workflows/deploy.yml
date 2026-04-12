@@ -17,6 +17,7 @@ jobs:
           host:     ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key:      ${{ secrets.VM_SSH_KEY }}
+          command_timeout: 5m
           script: |
             set -e
 
@@ -27,13 +28,16 @@ jobs:
             git pull origin main
 
             echo "==> Installing/updating dependencies..."
-            npm install --omit=dev
+            npm install --omit=dev --no-progress
 
             echo "==> Redeploying slash commands to Discord..."
             node src/deploy-guild.js || true
 
             echo "==> Restarting bot via pm2..."
-            pm2 restart KozzyX --update-env || true
-            pm2 save
+            timeout 60 pm2 restart KozzyX --update-env || timeout 60 pm2 start index.js --name KozzyX || true
+            timeout 15 pm2 save || true
+
+            echo "==> PM2 status:"
+            pm2 list
 
             echo "==> Done! Bot is back online."
