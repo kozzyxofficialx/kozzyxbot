@@ -27,6 +27,7 @@ import {
 import { safeRespond } from "../../utils/helpers.js";
 import { buildCoolEmbed, asEmbedPayload } from "../../utils/embeds.js";
 import { getGuildSettings, saveSettings } from "../../utils/database.js";
+import { buildTicketPanelEmbed, buildTicketPanelComponents } from "../../utils/ticketUtils.js";
 
 // ---------- Permission aliases -----------------------------------------
 const P = PermissionFlagsBits;
@@ -337,16 +338,129 @@ export default {
                 await saveSettings().catch((e) => console.error("[server_setup] saveSettings:", e));
             }
 
-            // 5. POST WELCOME + RULES EMBEDS
+            // 5. POST CHANNEL CONTENT — wire every channel to its system
             if (!dryRun) {
-                const welcomeCh = findCreatedByName(createdChannels, "welcome");
-                const rulesCh   = findCreatedByName(createdChannels, "rules");
-                const supportCh2 = findCreatedByName(createdChannels, "support");
-                const generalCh = findCreatedByName(createdChannels, "general");
-                if (welcomeCh) await postWelcomeEmbed(welcomeCh, guild, { rulesCh, supportCh: supportCh2, generalCh }).catch(() => {});
-                if (rulesCh)   await postRulesEmbed(rulesCh, guild).catch(() => {});
-                if (welcomeCh) log.add("👋", `Posted welcome message in <#${welcomeCh.id}>.`);
-                if (rulesCh)   log.add("📜", `Posted rules message in <#${rulesCh.id}>.`);
+                const welcomeCh       = findCreatedByName(createdChannels, "welcome");
+                const rulesCh         = findCreatedByName(createdChannels, "rules");
+                const supportCh       = findCreatedByName(createdChannels, "support");
+                const generalCh       = findCreatedByName(createdChannels, "general");
+                const casesCh         = findCreatedByName(createdChannels, "cases");
+                const modLogCh        = findCreatedByName(createdChannels, "mod-log");
+                const suggestionsCh   = findCreatedByName(createdChannels, "suggestions");
+                const introsCh        = findCreatedByName(createdChannels, "introductions");
+                const lfgCh           = findCreatedByName(createdChannels, "lfg");
+                const announcementsCh = findCreatedByName(createdChannels, "announcements");
+
+                // #welcome
+                if (welcomeCh) {
+                    await postWelcomeEmbed(welcomeCh, guild, { rulesCh, supportCh, generalCh }).catch(() => {});
+                    log.add("👋", `Posted welcome message in <#${welcomeCh.id}>.`);
+                }
+
+                // #rules
+                if (rulesCh) {
+                    await postRulesEmbed(rulesCh, guild).catch(() => {});
+                    log.add("📜", `Posted rules in <#${rulesCh.id}>.`);
+                }
+
+                // #support — post the live ticket panel (buttons work immediately)
+                if (supportCh) {
+                    const panelEmbed = buildTicketPanelEmbed(guild.id);
+                    const panelRows  = buildTicketPanelComponents(guild.id);
+                    await supportCh.send({ embeds: [new EmbedBuilder().setColor(panelEmbed.color).setTitle(panelEmbed.title).setDescription(panelEmbed.description)], components: panelRows }).catch(() => {});
+                    log.add("🎫", `Posted live ticket panel in <#${supportCh.id}>.`);
+                }
+
+                // #cases — post activation notice
+                if (casesCh) {
+                    const casesEmbed = new EmbedBuilder()
+                        .setColor(0x5865F2)
+                        .setTitle("🧾 Case Feed Active")
+                        .setDescription("All moderation actions and ticket events will be logged here automatically.\n\nDo **not** send messages in this channel.")
+                        .setTimestamp();
+                    await casesCh.send({ embeds: [casesEmbed] }).catch(() => {});
+                    log.add("🧾", `Posted case feed notice in <#${casesCh.id}>.`);
+                }
+
+                // #mod-log — post activation notice
+                if (modLogCh) {
+                    const modLogEmbed = new EmbedBuilder()
+                        .setColor(0xFEE75C)
+                        .setTitle("📝 Mod Log Active")
+                        .setDescription("Staff actions will be logged here.\n\nUse `,warn`, `,kick`, `,ban`, `,damage` and other mod commands — they'll appear here automatically.")
+                        .setTimestamp();
+                    await modLogCh.send({ embeds: [modLogEmbed] }).catch(() => {});
+                    log.add("📝", `Posted mod log notice in <#${modLogCh.id}>.`);
+                }
+
+                // #suggestions — post guide
+                if (suggestionsCh) {
+                    const suggestEmbed = new EmbedBuilder()
+                        .setColor(0x57F287)
+                        .setTitle("💡 Suggestions")
+                        .setDescription(
+                            "Have an idea to improve the server or bot? Drop it here!\n\n" +
+                            "**How to suggest:**\n" +
+                            "• Be clear and specific\n" +
+                            "• One idea per message\n" +
+                            "• React 👍 or 👎 to vote on others' ideas\n\n" +
+                            "_Staff will review all suggestions._"
+                        )
+                        .setTimestamp();
+                    await suggestionsCh.send({ embeds: [suggestEmbed] }).catch(() => {});
+                    log.add("💡", `Posted suggestions guide in <#${suggestionsCh.id}>.`);
+                }
+
+                // #introductions — post prompt
+                if (introsCh) {
+                    const introsEmbed = new EmbedBuilder()
+                        .setColor(0x1ABC9C)
+                        .setTitle("👋 Introduce Yourself!")
+                        .setDescription(
+                            "Tell us a bit about yourself! Here's a template to get started:\n\n" +
+                            "```\n" +
+                            "Name/Nickname:\n" +
+                            "Age:\n" +
+                            "Location:\n" +
+                            "Hobbies:\n" +
+                            "How did you find us?\n" +
+                            "```"
+                        )
+                        .setTimestamp();
+                    await introsCh.send({ embeds: [introsEmbed] }).catch(() => {});
+                    log.add("👋", `Posted intro prompt in <#${introsCh.id}>.`);
+                }
+
+                // #lfg — post guide
+                if (lfgCh) {
+                    const lfgEmbed = new EmbedBuilder()
+                        .setColor(0xEB459E)
+                        .setTitle("🔎 Looking for Group")
+                        .setDescription(
+                            "Use this channel to find teammates!\n\n" +
+                            "**Format your post like this:**\n" +
+                            "```\n" +
+                            "Game:\n" +
+                            "Mode/Type:\n" +
+                            "Players needed:\n" +
+                            "Skill level:\n" +
+                            "```"
+                        )
+                        .setTimestamp();
+                    await lfgCh.send({ embeds: [lfgEmbed] }).catch(() => {});
+                    log.add("🔎", `Posted LFG guide in <#${lfgCh.id}>.`);
+                }
+
+                // #announcements — post placeholder
+                if (announcementsCh) {
+                    const annEmbed = new EmbedBuilder()
+                        .setColor(0xED4245)
+                        .setTitle("📣 Announcements")
+                        .setDescription("This is where important server announcements will be posted. Stay tuned!")
+                        .setTimestamp();
+                    await announcementsCh.send({ embeds: [annEmbed] }).catch(() => {});
+                    log.add("📣", `Posted announcement placeholder in <#${announcementsCh.id}>.`);
+                }
             }
         } catch (err) {
             console.error("[server_setup] Fatal error:", err);
