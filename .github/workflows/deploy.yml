@@ -36,8 +36,8 @@ jobs:
             echo "==> Restarting bot via pm2..."
             pm2 kill || true
             sleep 2
-            pm2 start index.js --name KozzyX
-            pm2 save
+            pm2 start index.js --name KozzyX || true
+            pm2 save || true
 
             echo "==> Waiting for startup..."
             sleep 5
