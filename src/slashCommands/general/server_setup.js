@@ -79,10 +79,10 @@ const CATEGORY_BLUEPRINTS = {
     information: {
         name: "📢 INFORMATION",
         channels: [
-            { type: "text", name: "welcome",         topic: "👋 Welcome to the server!",         readOnly: true },
-            { type: "text", name: "rules",           topic: "📜 Server rules — please read!",    readOnly: true },
-            { type: "text", name: "announcements",   topic: "📣 Important server updates.",      readOnly: true },
-            { type: "text", name: "server-updates",  topic: "🆕 Changelog and feature updates.", readOnly: true },
+            { type: "text",         name: "welcome",        topic: "👋 Welcome to the server!",         readOnly: true },
+            { type: "text",         name: "rules",          topic: "📜 Server rules — please read!",    readOnly: true },
+            { type: "announcement", name: "announcements",  topic: "📣 Important server updates.",      readOnly: true },
+            { type: "announcement", name: "server-updates", topic: "🆕 Changelog and feature updates.", readOnly: true },
         ],
     },
     community: {
@@ -490,7 +490,10 @@ export default {
                 const rulesCh  = findCreatedByName(createdChannels, "rules");
                 const updateCh = findCreatedByName(createdChannels, "announcements") ||
                                  findCreatedByName(createdChannels, "server-updates");
-                await enableCommunity(guild, { rulesCh, updateCh }, log);
+                const modLogCh  = findCreatedByName(createdChannels, "mod-log");
+                const generalCh = findCreatedByName(createdChannels, "general");
+                const supportCh = findCreatedByName(createdChannels, "support");
+                await enableCommunity(guild, { rulesCh, updateCh, modLogCh, generalCh, supportCh }, log);
             } else {
                 log.add("🧪", `Would enable Community mode.`);
             }
@@ -671,7 +674,11 @@ async function provisionCategory({
         }
 
         try {
-            const type = ch.type === "voice" ? ChannelType.GuildVoice : ChannelType.GuildText;
+            const type = ch.type === "voice"
+                ? ChannelType.GuildVoice
+                : ch.type === "announcement"
+                    ? ChannelType.GuildAnnouncement
+                    : ChannelType.GuildText;
             const channel = await guild.channels.create({
                 name: ch.name,
                 type,
@@ -843,28 +850,54 @@ async function addMemeStickers(guild, log) {
     log.add("🎨", `Added **${added}** meme sticker(s) from emoji.gg (${guild.stickers.cache.size}/${maxStickers} slots used).`);
 }
 
-async function enableCommunity(guild, { rulesCh, updateCh }, log) {
+async function enableCommunity(guild, { rulesCh, updateCh, modLogCh, generalCh, supportCh }, log) {
     if (!rulesCh || !updateCh) {
         log.add("⚠️", `Community mode skipped — need both #rules and #announcements channels.`);
         return;
     }
     if (guild.features.includes("COMMUNITY")) {
-        log.add("⏭️", `Community mode already enabled — skipped.`);
-        return;
+        log.add("⏭️", `Community mode already enabled — skipping enable step.`);
+    } else {
+        try {
+            await guild.edit({
+                features: [...new Set([...guild.features, "COMMUNITY"])],
+                rulesChannelId: rulesCh.id,
+                publicUpdatesChannelId: updateCh.id,
+                safetyAlertsChannelId: modLogCh?.id ?? updateCh.id,
+                preferredLocale: "en-US",
+                explicitContentFilter: 2,
+                verificationLevel: guild.verificationLevel < 1 ? 1 : guild.verificationLevel,
+                reason: "server_setup — enabling Community mode",
+            });
+            log.add("🏘️", `Enabled **Community mode** (rules: <#${rulesCh.id}>, updates: <#${updateCh.id}>).`);
+        } catch (e) {
+            log.add("⚠️", `Community mode failed: \`${e.message}\` — enable it manually in Server Settings.`);
+        }
     }
+
+    // Welcome Screen (shown to new members before they access the server)
     try {
-        await guild.edit({
-            features: [...new Set([...guild.features, "COMMUNITY"])],
-            rulesChannelId: rulesCh.id,
-            publicUpdatesChannelId: updateCh.id,
-            preferredLocale: "en-US",
-            explicitContentFilter: 2,
-            verificationLevel: guild.verificationLevel < 1 ? 1 : guild.verificationLevel,
-            reason: "server_setup — enabling Community mode",
+        const welcomeChannels = [
+            rulesCh   && { channelId: rulesCh.id,   description: "Read the rules first",    emojiName: "📜" },
+            generalCh && { channelId: generalCh.id,  description: "Jump into general chat",  emojiName: "💬" },
+            updateCh  && { channelId: updateCh.id,   description: "Stay up to date",         emojiName: "📣" },
+            supportCh && { channelId: supportCh.id,  description: "Get help here",           emojiName: "🎫" },
+        ].filter(Boolean);
+
+        await guild.client.rest.patch(`/guilds/${guild.id}/welcome-screen`, {
+            body: {
+                enabled: true,
+                description: `Welcome to **${guild.name}**! Read the rules, pick your interests, and enjoy your stay. 🎉`,
+                welcome_channels: welcomeChannels.map((wc) => ({
+                    channel_id: wc.channelId,
+                    description: wc.description,
+                    emoji_name: wc.emojiName,
+                })),
+            },
         });
-        log.add("🏘️", `Enabled **Community mode** (rules: <#${rulesCh.id}>, updates: <#${updateCh.id}>).`);
+        log.add("🖼️", `Configured **Welcome Screen** with ${welcomeChannels.length} featured channel(s).`);
     } catch (e) {
-        log.add("⚠️", `Community mode failed: \`${e.message}\` — enable it manually in Server Settings.`);
+        log.add("⚠️", `Welcome Screen failed: \`${e.message}\``);
     }
 }
 
@@ -903,9 +936,11 @@ async function enableOnboarding(guild, { createdChannels, createdRoles }, log) {
     const activRole  = role("⭐ Active Member");
     const vipRole    = role("💎 VIP");
 
+    const botCommandsCh = ch("bot-commands");
+
     // Default channels every new member can see immediately
     const defaultChannelIds = [
-        generalCh, welcomeCh, rulesCh, announceCh, supportCh,
+        generalCh, welcomeCh, rulesCh, announceCh, supportCh, introsCh, botCommandsCh,
     ].filter(Boolean).map((c) => c.id);
 
     // ---------- Prompt 1: What are you here for? ----------
@@ -982,11 +1017,34 @@ async function enableOnboarding(guild, { createdChannels, createdRoles }, log) {
 
     const prompts = [];
 
+    // Prompt 0: Rules agreement (required — must pick before continuing)
+    prompts.push({
+        id: makeSnowflake(),
+        type: 0,
+        title: "Before you dive in — agree to our rules",
+        options: [
+            {
+                id: makeSnowflake(),
+                title: "I have read and agree to the rules ✅",
+                description: rulesCh
+                    ? `Read them in <#${rulesCh.id}> before agreeing.`
+                    : "Please read the #rules channel before agreeing.",
+                emoji: { name: "✅" },
+                role_ids: memberRole ? [memberRole.id] : [],
+                channel_ids: rulesCh ? [rulesCh.id] : [],
+            },
+        ],
+        single_select: true,
+        required: true,
+        in_onboarding: true,
+    });
+
+    // Prompt 1: Interests (multi-select)
     if (prompt1Options.length >= 2) {
         prompts.push({
             id: makeSnowflake(),
-            type: 0,            // MULTIPLE_CHOICE
-            title: "What are you here for?",
+            type: 0,
+            title: "What are you here for? (pick all that apply)",
             options: prompt1Options,
             single_select: false,
             required: false,
@@ -994,6 +1052,7 @@ async function enableOnboarding(guild, { createdChannels, createdRoles }, log) {
         });
     }
 
+    // Prompt 2: Member rank (single-select)
     if (prompt2Options.length >= 2) {
         prompts.push({
             id: makeSnowflake(),
@@ -1006,21 +1065,16 @@ async function enableOnboarding(guild, { createdChannels, createdRoles }, log) {
         });
     }
 
-    if (prompts.length === 0) {
-        log.add("⏭️", `Onboarding skipped — not enough channels/roles to build prompts.`);
-        return;
-    }
-
     try {
         await guild.client.rest.put(`/guilds/${guild.id}/onboarding`, {
             body: {
                 prompts,
                 default_channel_ids: defaultChannelIds,
                 enabled: true,
-                mode: 0,    // ONBOARDING_DEFAULT
+                mode: 1,    // ONBOARDING_ADVANCED — shows full channel list after prompts
             },
         });
-        log.add("🎓", `Set up **Onboarding** with ${prompts.length} prompt(s) and ${defaultChannelIds.length} default channel(s).`);
+        log.add("🎓", `Set up **Onboarding** with ${prompts.length} prompt(s) (incl. required rules agreement) and ${defaultChannelIds.length} default channels.`);
     } catch (e) {
         log.add("⚠️", `Onboarding setup failed: \`${e.message}\``);
     }
