@@ -5,6 +5,7 @@ import { initReminders } from "./src/utils/reminders.js";
 
 // Explicit imports to bypass loader issues
 import interactionCreate from "./src/events/interactionCreate.js";
+import messageCreate from "./src/events/messageCreate.js";
 import loadCommands from "./src/handlers/commandHandler.js";
 import { Events } from "discord.js";
 
@@ -28,6 +29,16 @@ async function init() {
             await interactionCreate.execute(...args, client);
         } catch (err) {
             console.error("[CRITICAL] Uncaught error in interaction handler:", err);
+        }
+    });
+
+    // 2b. Register Message Handler explicitly (prefix commands)
+    console.log("[Startup] Registering Message Handler...");
+    client.on(Events.MessageCreate, async (...args) => {
+        try {
+            await messageCreate.execute(...args, client);
+        } catch (err) {
+            console.error("[CRITICAL] Uncaught error in message handler:", err);
         }
     });
 
