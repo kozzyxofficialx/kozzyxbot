@@ -30,8 +30,11 @@ jobs:
             echo "==> Installing/updating dependencies..."
             npm install --omit=dev --no-progress
 
-            echo "==> Redeploying slash commands to Discord..."
+            echo "==> Redeploying slash commands to Discord (guild)..."
             node src/deploy-guild.js || true
+
+            echo "==> Redeploying slash commands to Discord (global)..."
+            node src/deploy.js || true
 
             echo "==> Restarting bot via pm2..."
             pm2 kill || true
