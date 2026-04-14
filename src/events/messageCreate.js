@@ -97,14 +97,14 @@ async function handleAutomodViolation(message, reason, rule, isAI = false) {
         embeds: [buildCoolEmbed({
             guildId: guild.id,
             type: "warning",
-            title: `${isAI ? "🤖 AI" : "🛡️"} AutoMod — Message Removed`,
+            title: "🛡️ AutoMod — Message Removed",
             description: `<@${message.author.id}> your message was removed.\n**Reason:** ${reason}\n${strikeText}`,
         })],
     }).catch(() => null);
     if (warn) setTimeout(() => warn.delete().catch(() => null), 7000);
 
     // Log to case channel
-    await postCase(guild, caseEmbed(guild.id, `${isAI ? "🤖 AI" : "🛡️"} AutoMod — ${rule.replace(/_/g, " ")}`, [
+    await postCase(guild, caseEmbed(guild.id, `🛡️ AutoMod — ${rule.replace(/_/g, " ")}`, [
         `**User:** ${message.author.tag} (<@${message.author.id}>)`,
         `**Rule:** ${rule}`,
         `**Reason:** ${reason}`,
