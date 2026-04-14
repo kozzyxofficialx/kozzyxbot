@@ -21,6 +21,7 @@ export default {
             // ── Booster welcome ─────────────────────────────────────────────
             const isBooster = member.premiumSince || member.roles.cache.some((r) => r.tags?.premiumSubscriber);
             if (!isBooster) return;
+            if (settings.plugins?.booster_roles === false) return;
 
             const cfg = settings.boosterWelcomeBonus || { enabled: true, title: "Server Booster" };
             if (!cfg.enabled) return;
