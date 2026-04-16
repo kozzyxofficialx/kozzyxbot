@@ -1,0 +1,97 @@
+{
+  "name": "deepseek-assistant",
+  "displayName": "DeepSeek Assistant",
+  "description": "Personal DeepSeek AI coding assistant sidebar",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.116.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "deepseek-assistant",
+          "title": "DeepSeek",
+          "icon": "$(sparkle)"
+        }
+      ]
+    },
+    "views": {
+      "deepseek-assistant": [
+        {
+          "type": "webview",
+          "id": "deepseekChatView",
+          "name": "Chat",
+          "icon": "$(sparkle)",
+          "contextualTitle": "DeepSeek"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "deepseek-assistant.openChat",
+        "title": "DeepSeek: Open Chat"
+      },
+      {
+        "command": "deepseek-assistant.clearChat",
+        "title": "DeepSeek: Clear Conversation"
+      }
+    ],
+    "configuration": {
+      "title": "DeepSeek Assistant",
+      "properties": {
+        "deepseek.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "DeepSeek API key (get one at https://platform.deepseek.com)"
+        },
+        "deepseek.model": {
+          "type": "string",
+          "default": "deepseek-chat",
+          "enum": [
+            "deepseek-chat",
+            "deepseek-reasoner"
+          ],
+          "description": "DeepSeek model to use"
+        },
+        "deepseek.temperature": {
+          "type": "number",
+          "default": 0.7,
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Sampling temperature"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "axios": "^1.15.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.116.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.2.1",
+    "eslint": "^9.39.3",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1"
+  }
+}
