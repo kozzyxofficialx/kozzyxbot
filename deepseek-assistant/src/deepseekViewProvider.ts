@@ -30,7 +30,7 @@ export class DeepseekViewProvider implements vscode.WebviewViewProvider {
                     const userMessage: string = data.value;
                     this.history.push({ role: 'user', content: userMessage });
                     webviewView.webview.postMessage({ type: 'thinking' });
-                    const reply = await this.callDeepSeekAPI();
+                    const reply = await this.callOllamaAPI();
                     if (reply !== null) {
                         this.history.push({ role: 'assistant', content: reply });
                         webviewView.webview.postMessage({ type: 'response', value: reply });
@@ -52,16 +52,11 @@ export class DeepseekViewProvider implements vscode.WebviewViewProvider {
         this._view?.webview.postMessage({ type: 'cleared' });
     }
 
-    private async callDeepSeekAPI(): Promise<string | null> {
+    private async callOllamaAPI(): Promise<string | null> {
         const config = vscode.workspace.getConfiguration('deepseek');
-        const apiKey = config.get<string>('apiKey');
-        const model = config.get<string>('model') || 'deepseek-chat';
+        const baseUrl = (config.get<string>('ollamaUrl') || 'http://localhost:11434').replace(/\/$/, '');
+        const model = config.get<string>('model') || 'qwen2.5-coder:7b';
         const temperature = config.get<number>('temperature') ?? 0.7;
-
-        if (!apiKey) {
-            vscode.window.showErrorMessage('DeepSeek API key not set. Add "deepseek.apiKey" in Settings.');
-            return null;
-        }
 
         const systemPrompt: ChatMessage = {
             role: 'system',
@@ -70,7 +65,7 @@ export class DeepseekViewProvider implements vscode.WebviewViewProvider {
 
         try {
             const response = await axios.post(
-                'https://api.deepseek.com/v1/chat/completions',
+                `${baseUrl}/v1/chat/completions`,
                 {
                     model,
                     messages: [systemPrompt, ...this.history],
@@ -78,17 +73,18 @@ export class DeepseekViewProvider implements vscode.WebviewViewProvider {
                     temperature
                 },
                 {
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     timeout: 120000
                 }
             );
             return response.data.choices[0].message.content as string;
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : String(error);
-            vscode.window.showErrorMessage(`DeepSeek API error: ${message}`);
+            if (message.includes('ECONNREFUSED') || message.includes('connect')) {
+                vscode.window.showErrorMessage('Ollama is not running. Start it with: ollama serve');
+            } else {
+                vscode.window.showErrorMessage(`Ollama error: ${message}`);
+            }
             return null;
         }
     }
@@ -198,13 +194,13 @@ export class DeepseekViewProvider implements vscode.WebviewViewProvider {
 </head>
 <body>
     <div id="toolbar">
-        <span>DeepSeek</span>
+        <span>Ollama</span>
         <button id="clear-btn" title="Clear conversation">Clear</button>
     </div>
     <div id="messages"></div>
-    <div id="thinking">DeepSeek is thinking…</div>
+    <div id="thinking">Thinking…</div>
     <div id="input-wrap">
-        <textarea id="input" rows="2" placeholder="Ask DeepSeek anything… (Shift+Enter for newline)"></textarea>
+        <textarea id="input" rows="2" placeholder="Ask anything… (Shift+Enter for newline)"></textarea>
         <button id="send">Send</button>
     </div>
 <script nonce="${nonce}">
@@ -229,7 +225,7 @@ export class DeepseekViewProvider implements vscode.WebviewViewProvider {
         div.className = 'message ' + role;
         const roleEl = document.createElement('div');
         roleEl.className = 'role';
-        roleEl.textContent = role === 'user' ? 'You' : role === 'assistant' ? 'DeepSeek' : 'Error';
+        roleEl.textContent = role === 'user' ? 'You' : role === 'assistant' ? 'Ollama' : 'Error';
         const content = document.createElement('div');
         content.className = 'content';
         content.innerHTML = renderMarkdown(text);

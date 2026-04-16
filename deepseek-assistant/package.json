@@ -1,8 +1,8 @@
 {
   "name": "deepseek-assistant",
-  "displayName": "DeepSeek Assistant",
-  "description": "Personal DeepSeek AI coding assistant sidebar",
-  "version": "0.0.1",
+  "displayName": "AI Code Assistant (Ollama)",
+  "description": "Local AI coding assistant sidebar powered by Ollama",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.116.0"
   },
@@ -45,21 +45,17 @@
       }
     ],
     "configuration": {
-      "title": "DeepSeek Assistant",
+      "title": "AI Code Assistant",
       "properties": {
-        "deepseek.apiKey": {
+        "deepseek.ollamaUrl": {
           "type": "string",
-          "default": "",
-          "description": "DeepSeek API key (get one at https://platform.deepseek.com)"
+          "default": "http://localhost:11434",
+          "description": "Ollama server URL"
         },
         "deepseek.model": {
           "type": "string",
-          "default": "deepseek-chat",
-          "enum": [
-            "deepseek-chat",
-            "deepseek-reasoner"
-          ],
-          "description": "DeepSeek model to use"
+          "default": "qwen2.5-coder:7b",
+          "description": "Ollama model to use (e.g. qwen2.5-coder:7b, llama3.2, codellama)"
         },
         "deepseek.temperature": {
           "type": "number",
