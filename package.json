@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.55.0",
+    "axios": "^1.15.0",
     "discord.js": "^14.17.3",
     "dotenv": "^16.4.7",
     "open": "^11.0.0",

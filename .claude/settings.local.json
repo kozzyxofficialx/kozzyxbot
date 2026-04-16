@@ -1,17 +1,4 @@
 {
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cd \"/Users/ckazros/Library/Mobile Documents/com~apple~CloudDocs/my-discord-bot\" && git add -A && git diff --cached --quiet || git commit -m \"chore: auto-save changes\" && git push 2>/dev/null || true",
-            "statusMessage": "Pushing to GitHub..."
-          }
-        ]
-      }
-    ]
-  },
   "permissions": {
     "allow": [
       "Bash(node --check src/slashCommands/general/server_setup.js)",
@@ -25,7 +12,21 @@
       "Bash(node --check src/prefixCommands/config/alias.js)",
       "Bash(node --check src/events/messageCreate.js)",
       "Bash(node --check src/utils/database.js)",
-      "Bash(node --check src/slashCommands/general/modhelp.js)"
+      "Bash(node --check src/slashCommands/general/modhelp.js)",
+      "Bash(npx vsce *)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"/Users/ckazros/Library/Mobile Documents/com~apple~CloudDocs/my-discord-bot\" && git add -A && git diff --cached --quiet || git commit -m \"chore: auto-save changes\" && git push 2>/dev/null || true",
+            "statusMessage": "Pushing to GitHub..."
+          }
+        ]
+      }
     ]
   }
 }
