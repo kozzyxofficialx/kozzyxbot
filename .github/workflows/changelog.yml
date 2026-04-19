@@ -1,0 +1,65 @@
+name: Auto Changelog
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get commits since last tag
+        id: commits
+        run: |
+          PREV_TAG=$(git tag --sort=-version:refname | sed -n '2p')
+          if [ -z "$PREV_TAG" ]; then
+            COMMITS=$(git log --oneline -20)
+          else
+            COMMITS=$(git log ${PREV_TAG}..HEAD --oneline)
+          fi
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMITS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Generate changelog with Claude Haiku
+        id: haiku
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          COMMITS: ${{ steps.commits.outputs.commits }}
+        run: |
+          RESPONSE=$(curl -s https://api.anthropic.com/v1/messages \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "content-type: application/json" \
+            -d "{
+              \"model\": \"claude-haiku-4-5-20251001\",
+              \"max_tokens\": 1024,
+              \"messages\": [{
+                \"role\": \"user\",
+                \"content\": \"You are writing a Discord bot changelog. Given these git commits, produce a JSON object with a 'body' field containing clean markdown. Group into sections: ### New, ### Fixed, ### Changed. Skip merge commits and version bumps. One line per item starting with a dash.\n\nCommits:\n$COMMITS\n\nReturn only valid JSON like: {\\\"body\\\": \\\"### New\\\\n- thing\\\"}\"
+              }]
+            }")
+          BODY=$(echo $RESPONSE | python3 -c "
+          import sys, json
+          data = json.load(sys.stdin)
+          text = data['content'][0]['text']
+          parsed = json.loads(text)
+          print(parsed['body'])
+          ")
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes "${{ steps.haiku.outputs.body }}"
