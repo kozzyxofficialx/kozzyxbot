@@ -1,9 +1,8 @@
+import http from 'http';
 import { ExtendedClient } from "./src/structures/Client.js";
 import "dotenv/config";
 import { initDB } from "./src/utils/db.js";
 import { initReminders } from "./src/utils/reminders.js";
-
-// Explicit imports to bypass loader issues
 import interactionCreate from "./src/events/interactionCreate.js";
 import messageCreate from "./src/events/messageCreate.js";
 import loadCommands from "./src/handlers/commandHandler.js";
@@ -18,11 +17,9 @@ async function init() {
 
     await initDB();
 
-    // 1. Load Commands explicitly
     console.log("[Startup] Loading Commands...");
     await loadCommands(client);
 
-    // 2. Register Interaction Handler explicitly
     console.log("[Startup] Registering Interaction Handler...");
     client.on(Events.InteractionCreate, async (...args) => {
         try {
@@ -32,7 +29,6 @@ async function init() {
         }
     });
 
-    // 2b. Register Message Handler explicitly (prefix commands)
     console.log("[Startup] Registering Message Handler...");
     client.on(Events.MessageCreate, async (...args) => {
         try {
@@ -42,14 +38,30 @@ async function init() {
         }
     });
 
-    // 3. Register Ready Handler explicitly
     client.once(Events.ClientReady, (c) => {
         console.log(`[Startup] ✅ Logged in as ${c.user.tag}`);
-        // Deploy code moved here to be safe
         client.deploySlashCommands();
+
+        // ── Stats endpoint ──────────────────────────────────────
+        const statsData = {
+            servers: client.guilds.cache.size,
+            commands: 50,
+        };
+
+        client.on(Events.GuildCreate, () => { statsData.servers = client.guilds.cache.size; });
+        client.on(Events.GuildDelete, () => { statsData.servers = client.guilds.cache.size; });
+
+        http.createServer((req, res) => {
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({
+                servers: statsData.servers,
+                commands: statsData.commands,
+                uptime: Math.floor(process.uptime()),
+            }));
+        }).listen(3456, () => console.log('[Stats] Endpoint live on :3456'));
     });
 
-    // 4. Init Utilities
     await initReminders(client);
 
     console.log("[Startup] Logging in...");
@@ -61,6 +73,7 @@ init();
 process.on("unhandledRejection", (err) => {
     console.error("Unhandled Rejection:", err);
 });
+
 process.on("uncaughtException", (err) => {
     console.error("Uncaught Exception:", err);
 });
