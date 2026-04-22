@@ -1,0 +1,3329 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KozzyX | Dashboard</title>
+    <meta name="description" content="kozzyx control panel: premium browser-based management for your Discord bot." />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect x='6' y='8' width='28' height='26' rx='8' fill='%238b5cf6'/><rect x='11' y='13' width='18' height='13' rx='4' fill='%230b0b0d'/><circle cx='16' cy='19.5' r='1.6' fill='white'/><circle cx='24' cy='19.5' r='1.6' fill='white'/><line x1='20' y1='8' x2='20' y2='4' stroke='%238b5cf6' stroke-width='1.5' stroke-linecap='round'/><circle cx='20' cy='3' r='1.5' fill='%238b5cf6'/></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030303;
+            --bg-elev: rgba(15, 15, 18, 0.7);
+            --bg-elev-2: rgba(25, 25, 30, 0.8);
+            --bg-elev-3: rgba(35, 35, 45, 0.9);
+            --fg: #fcfcfc;
+            --fg-dim: #b0b0b8;
+            --fg-faint: #6a6a72;
+            --line: rgba(255, 255, 255, 0.08);
+            --line-soft: rgba(255, 255, 255, 0.04);
+            --accent: oklch(0.72 0.17 280);
+            --accent-soft: oklch(0.72 0.17 280 / 0.14);
+            --accent-fg: #ffffff;
+            --danger: oklch(0.65 0.2 25);
+            --danger-soft: oklch(0.65 0.2 25 / 0.15);
+            --ok: oklch(0.75 0.18 155);
+            --ok-soft: oklch(0.75 0.18 155 / 0.15);
+            --warn: oklch(0.82 0.18 85);
+            --warn-soft: oklch(0.82 0.18 85 / 0.15);
+            --info: oklch(0.75 0.18 225);
+            --glass: blur(16px) saturate(180%);
+            --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        html[data-theme="light"] {
+            --bg: #fdfdfb;
+            --bg-elev: rgba(255, 255, 255, 0.7);
+            --bg-elev-2: rgba(245, 245, 240, 0.8);
+            --bg-elev-3: rgba(235, 235, 230, 0.9);
+            --fg: #0a0a0c;
+            --fg-dim: #55555e;
+            --fg-faint: #9999a4;
+            --line: rgba(0, 0, 0, 0.08);
+            --line-soft: rgba(0, 0, 0, 0.04);
+        }
+
+        /* Base & Resets */
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--fg);
+            font-family: 'Geist', -apple-system, system-ui, sans-serif;
+            font-feature-settings: 'ss01', 'cv01';
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: inherit;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+            outline: none;
+        }
+
+        .mono {
+            font-family: 'Geist Mono', ui-monospace, monospace;
+        }
+
+        .serif {
+            font-family: 'Instrument Serif', serif;
+        }
+
+        /* Layout */
+        .app {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+            background: var(--bg);
+            position: relative;
+            z-index: 1;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            background: var(--bg);
+        }
+
+        .content {
+            flex: 1;
+            padding: 32px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            background: var(--bg-elev);
+            backdrop-filter: var(--glass);
+            -webkit-backdrop-filter: var(--glass);
+            border-right: 1px solid var(--line);
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-premium);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 8px 16px;
+            border-bottom: 1px solid var(--line);
+            margin-bottom: 8px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+            font-size: 14px;
+        }
+
+        .sidebar-brand-text b {
+            font-weight: 600;
+        }
+
+        .sidebar-brand-text small {
+            font-size: 11px;
+            color: var(--fg-faint);
+        }
+
+        .sidebar-foot {
+            margin-top: auto;
+            padding-top: 12px;
+            border-top: 1px solid var(--line);
+            flex-shrink: 0;
+        }
+
+        .server-switcher {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: var(--bg-elev-2);
+        }
+
+        .server-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .server-switcher-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.3;
+            min-width: 0;
+        }
+
+        .server-switcher-text b {
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .server-switcher-text small {
+            font-size: 11px;
+            color: var(--fg-faint);
+        }
+
+        .nav-section-label {
+            font-size: 10px;
+            color: var(--fg-faint);
+            font-family: 'Geist Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 18px 14px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--fg-dim);
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-elev-2);
+            color: var(--fg);
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background: var(--accent-soft);
+            color: var(--fg);
+        }
+
+        .nav-item svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 18px;
+            background: var(--accent);
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Table Styles */
+        .tbl-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .tbl {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .tbl th {
+            padding: 14px 16px;
+            font-weight: 600;
+            color: var(--fg-faint);
+            border-bottom: 1px solid var(--line);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tbl td {
+            padding: 16px;
+            border-bottom: 1px solid var(--line-soft);
+            vertical-align: middle;
+        }
+
+        .tbl tr:hover td {
+            background: var(--bg-elev-2);
+        }
+
+        /* Form Elements */
+        .input,
+        .textarea,
+        .select {
+            width: 100%;
+            background: var(--bg-elev-2);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: var(--fg);
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .input:focus,
+        .textarea:focus,
+        .select:focus {
+            border-color: var(--accent);
+            background: var(--bg-elev-3);
+            box-shadow: 0 0 0 4px var(--accent-soft);
+        }
+
+        .textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn.primary {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 8px 24px -8px var(--accent);
+        }
+
+        .btn.primary:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px -8px var(--accent);
+        }
+
+        .btn.ghost {
+            border: 1px solid var(--line);
+            color: var(--fg-dim);
+        }
+
+        .btn.ghost:hover {
+            background: var(--bg-elev-2);
+            color: var(--fg);
+            border-color: var(--line);
+        }
+
+        .btn.danger {
+            color: var(--danger);
+        }
+
+        .btn.danger:hover {
+            background: var(--danger-soft);
+        }
+
+        .btn.sm {
+            padding: 8px 16px;
+            font-size: 12px;
+            border-radius: 10px;
+        }
+
+        /* Components: Cards & Stats */
+        .card {
+            background: var(--bg-elev);
+            backdrop-filter: var(--glass);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: var(--shadow-premium);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: color-mix(in oklab, var(--accent) 40%, transparent);
+        }
+
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .card-head h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.02em;
+        }
+
+        .stat {
+            background: var(--bg-elev);
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+        }
+
+        .stat:hover {
+            border-color: var(--accent);
+            transform: scale(1.02);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--fg-faint);
+            font-family: 'Geist Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            margin: 4px 0;
+        }
+
+        .stat-delta {
+            font-size: 12px;
+            font-family: 'Geist Mono', monospace;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-delta.up {
+            color: var(--ok);
+        }
+
+        .stat-delta.down {
+            color: var(--danger);
+        }
+
+        /* Components: Logs & Console */
+        .console {
+            background: #050507;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
+            font-family: 'Geist Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .log-line {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 8px;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .log-time {
+            color: var(--fg-faint);
+            font-size: 11px;
+        }
+
+        .log-level {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+
+        .log-level.info {
+            color: var(--info);
+        }
+
+        .log-level.ok {
+            color: var(--ok);
+        }
+
+        .log-level.warn {
+            color: var(--warn);
+        }
+
+        .log-level.err {
+            color: var(--danger);
+        }
+
+        /* Components: Heatmap */
+        .heatmap {
+            display: grid;
+            grid-template-columns: repeat(24, 1fr);
+            gap: 6px;
+        }
+
+        .heat-cell {
+            aspect-ratio: 1;
+            background: var(--bg-elev-2);
+            border-radius: 4px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .heat-cell:hover {
+            transform: scale(1.4);
+            z-index: 10;
+            box-shadow: 0 0 15px var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        /* Utilities */
+        .badge {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: var(--bg-elev-3);
+            color: var(--fg-dim);
+            font-family: 'Geist Mono', monospace;
+            font-weight: 600;
+        }
+
+        .badge.accent {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .tag {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-family: 'Geist Mono', monospace;
+        }
+
+        .tag.ok {
+            background: var(--ok-soft);
+            color: var(--ok);
+        }
+
+        .tag.err {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        /* Animations */
+        .grain {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+        }
+
+        .aurora {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+            opacity: 0.15;
+        }
+
+        .aurora::after {
+            content: '';
+            position: absolute;
+            width: 100vw;
+            height: 100vw;
+            border-radius: 50%;
+            filter: blur(140px);
+            background: radial-gradient(circle, var(--accent), transparent 70%);
+            top: -40%;
+            left: -20%;
+            animation: aurora 30s linear infinite alternate;
+        }
+
+        @keyframes aurora {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(20vw, 15vh) scale(1.2);
+            }
+        }
+
+        .page {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .page.active {
+            display: block;
+            animation: pageIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes pageIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Guild Selector Modal */
+        #guild-selector-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .guild-modal {
+            background: var(--bg-elev);
+            border: 1px solid var(--line);
+            border-radius: 32px;
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            box-shadow: var(--shadow-premium);
+            animation: modalIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .guild-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .guild-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px;
+            background: var(--bg-elev-2);
+            border: 1px solid transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .guild-item:hover {
+            background: var(--bg-elev-3);
+            border-color: var(--accent);
+            transform: translateX(6px);
+        }
+
+        .guild-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .guild-info h3 {
+            font-size: 16px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .guild-info p {
+            font-size: 12px;
+            color: var(--fg-dim);
+            margin: 2px 0 0;
+            font-family: 'Geist Mono', monospace;
+        }
+
+        /* Status & Pills */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: var(--ok-soft);
+            color: var(--ok);
+            font-family: 'Geist Mono', monospace;
+        }
+
+        .status-pill.offline {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .status-pill .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow: 0 0 10px currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        [v-cloak] {
+            display: none !important;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="grain"></div>
+    <div class="aurora"></div>
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="login-screen" style="display: none;">
+        <div class="login-card">
+            <div class="login-logo">
+                <svg viewBox="0 0 40 40" width="60" height="60">
+                    <rect x="6" y="8" width="28" height="26" rx="8" fill="var(--accent)" />
+                    <rect x="11" y="13" width="18" height="13" rx="4" fill="#0b0b0d" />
+                    <circle cx="16" cy="19.5" r="1.6" fill="#fff" />
+                    <circle cx="24" cy="19.5" r="1.6" fill="#fff" />
+                    <line x1="20" y1="8" x2="20" y2="4" stroke="var(--accent)" stroke-width="1.5"
+                        stroke-linecap="round" />
+                    <circle cx="20" cy="3" r="1.5" fill="var(--accent)" />
+                </svg>
+            </div>
+            <h1>Kozzyx Dashboard</h1>
+            <p>Please authorize with Discord to manage your servers and view live statistics.</p>
+            <button class="login-btn" onclick="startLogin()">
+                <svg fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037 19.736 19.736 0 0 0-4.885 1.515.069.069 0 0 0-.032.027C.533 9.048-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+                </svg>
+                Login with Discord
+            </button>
+        </div>
+    </div>
+
+    <div class="app" id="app" style="display: none;">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <svg viewBox="0 0 40 40" width="28" height="28" style="display:block">
+                    <rect x="6" y="8" width="28" height="26" rx="8" fill="var(--accent)" />
+                    <rect x="11" y="13" width="18" height="13" rx="4" fill="#0b0b0d" />
+                    <circle cx="16" cy="19.5" r="1.6" fill="#fff" />
+                    <circle cx="24" cy="19.5" r="1.6" fill="#fff" />
+                    <line x1="20" y1="8" x2="20" y2="4" stroke="var(--accent)" stroke-width="1.5"
+                        stroke-linecap="round" />
+                    <circle cx="20" cy="3" r="1.5" fill="var(--accent)" />
+                </svg>
+                <div class="sidebar-brand-text">
+                    <b>kozzyx</b>
+                    <small>control panel</small>
+                </div>
+            </div>
+
+            <div class="nav-section-label">Overview</div>
+            <a class="nav-item active" data-page="overview" href="#overview">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <rect x="3" y="3" width="7" height="9" />
+                    <rect x="14" y="3" width="7" height="5" />
+                    <rect x="14" y="12" width="7" height="9" />
+                    <rect x="3" y="16" width="7" height="5" />
+                </svg>
+                Dashboard
+            </a>
+            <a class="nav-item" data-page="stats" href="#stats">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="18" y1="20" x2="18" y2="10" />
+                    <line x1="12" y1="20" x2="12" y2="4" />
+                    <line x1="6" y1="20" x2="6" y2="14" />
+                </svg>
+                Server stats
+            </a>
+            <a class="nav-item" data-page="logs" href="#logs">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <polyline points="4 17 10 11 4 5" />
+                    <line x1="12" y1="19" x2="20" y2="19" />
+                </svg>
+                Live console
+                <span class="badge">LIVE</span>
+            </a>
+
+            <div class="nav-section-label">Moderation</div>
+            <a class="nav-item" data-page="members" href="#members">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+                Members
+            </a>
+            <a class="nav-item" data-page="modlog" href="#modlog">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                Mod log
+            </a>
+            <a class="nav-item" style="display:none" data-page="automod" href="#automod">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                </svg>
+                Automod
+                <span class="badge">7</span>
+            </a>
+
+            <div class="nav-section-label">Server</div>
+            <a class="nav-item" data-page="roles" href="#roles">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                    <line x1="7" y1="7" x2="7.01" y2="7" />
+                </svg>
+                Roles
+            </a>
+            <a class="nav-item" data-page="channels" href="#channels">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="4" y1="9" x2="20" y2="9" />
+                    <line x1="4" y1="15" x2="20" y2="15" />
+                    <line x1="10" y1="3" x2="8" y2="21" />
+                    <line x1="16" y1="3" x2="14" y2="21" />
+                </svg>
+                Channels
+            </a>
+            <a class="nav-item" data-page="messaging" href="#messaging">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                Send message
+            </a>
+            <a class="nav-item" style="display:none" data-page="tickets" href="#tickets">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4" />
+                    <path d="M4 6v12c0 1.1.9 2 2 2h14v-4" />
+                    <path d="M18 12a2 2 0 0 0 0 4h4v-4z" />
+                </svg>
+                Tickets
+                <span class="badge">3</span>
+            </a>
+
+            <div class="nav-section-label">Engine</div>
+            <a class="nav-item" data-page="commands" href="#commands">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <polyline points="16 18 22 12 16 6" />
+                    <polyline points="8 6 2 12 8 18" />
+                </svg>
+                Commands
+            </a>
+            <a class="nav-item" data-page="engine" href="#engine" id="nav-engine">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <circle cx="12" cy="12" r="3" />
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
+                Engine
+            </a>
+
+            <div class="nav-section-label">Dashboard Exclusive</div>
+            <a class="nav-item" data-page="broadcaster" href="#broadcaster">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M18 8a3 3 0 0 0-3-3H5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8z" />
+                    <path d="M22 12l-4-4v8l4-4z" />
+                </svg>
+                Mass Broadcaster
+                <span class="badge" style="background:var(--accent); color:white">PRO</span>
+            </a>
+            <a class="nav-item" data-page="analytics" href="#analytics">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                </svg>
+                Advanced Analytics
+            </a>
+            <a class="nav-item" data-page="triggers" href="#triggers">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path
+                        d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                </svg>
+                Custom Triggers
+            </a>
+
+            <div class="sidebar-foot">
+                <div class="server-switcher" style="cursor:default">
+                    <div class="server-icon" id="server-icon">KO</div>
+                    <div class="server-switcher-text">
+                        <b id="server-name">kozzy's lair</b>
+                        <small id="server-members">loading...</small>
+                    </div>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="color:var(--fg-faint)">
+                        <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                </div>
+            </div>
+        </aside>
+
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <!-- MAIN -->
+        <main class="main">
+            <!-- TOPBAR -->
+            <div class="topbar">
+                <button class="iconbtn mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="4" y1="6" x2="20" y2="6" />
+                        <line x1="4" y1="12" x2="20" y2="12" />
+                        <line x1="4" y1="18" x2="20" y2="18" />
+                    </svg>
+                </button>
+                <div class="breadcrumb">
+                    <span>kozzy's lair</span>
+                    <span class="sep">/</span>
+                    <span class="cur" id="crumb">Dashboard</span>
+                </div>
+                <div class="topbar-right">
+                    <span class="status-pill"><span class="dot"></span>bot online</span>
+                    <button class="iconbtn"
+                        onclick="document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'"
+                        title="Toggle theme">
+                        <svg id="theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round">
+                            <circle cx="12" cy="12" r="4" />
+                            <path
+                                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+                        </svg>
+                    </button>
+                    <button class="iconbtn" title="Refresh" onclick="pulseConsole()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round">
+                            <polyline points="23 4 23 10 17 10" />
+                            <polyline points="1 20 1 14 7 14" />
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                        </svg>
+                    </button>
+                    <div class="user-pill" id="user-profile">
+                        <div class="avatar lg" id="user-avatar">KX</div>
+                        <div style="line-height:1.2">
+                            <div class="uname" id="user-name">Loading...</div>
+                            <div class="uhandle" id="user-tag">@bot</div>
+                        </div>
+                    </div>
+                    <button class="iconbtn danger" title="Logout" onclick="logout()" style="margin-left: 8px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="content">
+                <!-- ==================== OVERVIEW ==================== -->
+                <section class="page active" data-page="overview">
+                    <div class="page-head">
+                        <h1>good morning, <span class="serif">kozzy.</span></h1>
+                        <p id="overview-summary">Connecting to bot...</p>
+                    </div>
+
+                    <div class="grid cols-4" style="margin-bottom: 20px;">
+                        <div class="stat lift">
+                            <div class="stat-label">Members</div>
+                            <div class="stat-value num" id="stat-members">--</div>
+                            <div class="stat-delta" id="stat-members-delta">-- today</div>
+                            <div class="stat-spark">
+                                <div class="spark-bars">
+                                    <span style="height:40%"></span><span style="height:60%"></span>
+                                    <span style="height:55%"></span><span style="height:75%"></span>
+                                    <span style="height:65%"></span><span style="height:90%"></span>
+                                    <span style="height:80%"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat lift">
+                            <div class="stat-label">Uptime</div>
+                            <div class="stat-value num" id="stat-uptime">--</div>
+                            <div class="stat-delta">Since last reboot</div>
+                        </div>
+                        <div class="stat lift">
+                            <div class="stat-label">Guilds</div>
+                            <div class="stat-value num" id="stat-guilds">--</div>
+                            <div class="stat-delta">Global reach</div>
+                        </div>
+                        <div class="stat lift">
+                            <div class="stat-label">Status</div>
+                            <div class="stat-value num" id="stat-status">Connecting</div>
+                            <div class="stat-delta">All systems check</div>
+                        </div>
+                    </div>
+
+                    <div class="grid cols-2" style="margin-bottom: 20px;">
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Quick actions</h2>
+                                <span class="badge">SHORTCUTS</span>
+                            </div>
+                            <div class="action-grid">
+                                <button class="action-card" onclick="navigate('broadcaster')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <path
+                                            d="M18 8a3 3 0 0 0-3-3H5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8z" />
+                                        <path d="M22 12l-4-4v8l4-4z" />
+                                    </svg>
+                                    <b>Mass Broadcast</b>
+                                    <small>Send to all channels</small>
+                                </button>
+                                <button class="action-card" onclick="navigate('automod')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                                    </svg>
+                                    <b>Tune automod</b>
+                                    <small>7 rules active</small>
+                                </button>
+                                <button class="action-card" onclick="navigate('members')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                        <circle cx="9" cy="7" r="4" />
+                                    </svg>
+                                    <b>Manage members</b>
+                                    <small>Ban, kick, assign roles</small>
+                                </button>
+                                <button class="action-card" onclick="navigate('deploy')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <polyline points="16 16 12 12 8 16" />
+                                        <line x1="12" y1="12" x2="12" y2="21" />
+                                        <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+                                    </svg>
+                                    <b>Deploy bot</b>
+                                    <small>Last: 2h ago · main</small>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Recent activity</h2>
+                                <span class="badge">LIVE</span>
+                            </div>
+                            <div>
+                                <div class="feed-item">
+                                    <div class="feed-icon join">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                                            stroke-linecap="round">
+                                            <line x1="12" y1="5" x2="12" y2="19" />
+                                            <line x1="5" y1="12" x2="19" y2="12" />
+                                        </svg>
+                                    </div>
+                                    <div class="feed-content">
+                                        <div class="feed-title"><b>mira</b> joined the server</div>
+                                        <div class="feed-time">2m ago</div>
+                                    </div>
+                                </div>
+                                <div class="feed-item">
+                                    <div class="feed-icon cmd">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round">
+                                            <polyline points="16 18 22 12 16 6" />
+                                            <polyline points="8 6 2 12 8 18" />
+                                        </svg>
+                                    </div>
+                                    <div class="feed-content">
+                                        <div class="feed-title"><b>nova</b> ran <span class="mono"
+                                                style="color:var(--accent)">/play</span></div>
+                                        <div class="feed-time">6m ago · #music</div>
+                                    </div>
+                                </div>
+                                <div class="feed-item">
+                                    <div class="feed-icon warn">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round">
+                                            <path
+                                                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                                            <line x1="12" y1="9" x2="12" y2="13" />
+                                            <line x1="12" y1="17" x2="12.01" y2="17" />
+                                        </svg>
+                                    </div>
+                                    <div class="feed-content">
+                                        <div class="feed-title">Automod warned <b>spamr_99</b></div>
+                                        <div class="feed-time">14m ago · invite link</div>
+                                    </div>
+                                </div>
+                                <div class="feed-item">
+                                    <div class="feed-icon ban">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round">
+                                            <circle cx="12" cy="12" r="10" />
+                                            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                                        </svg>
+                                    </div>
+                                    <div class="feed-content">
+                                        <div class="feed-title"><b>kozzy</b> banned <b>raid0r</b></div>
+                                        <div class="feed-time">28m ago · reason: raid</div>
+                                    </div>
+                                </div>
+                                <div class="feed-item">
+                                    <div class="feed-icon msg">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round">
+                                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                        </svg>
+                                    </div>
+                                    <div class="feed-content">
+                                        <div class="feed-title"><b>Bot</b> sent announcement to #general</div>
+                                        <div class="feed-time">1h ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid cols-2">
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Top channels (24h)</h2>
+                            </div>
+                            <div class="chart-bar-row"><span>#general</span>
+                                <div class="chart-bar-track">
+                                    <div class="chart-bar-fill" style="width:92%"></div>
+                                </div><span class="chart-num">8,412</span>
+                            </div>
+                            <div class="chart-bar-row"><span>#memes</span>
+                                <div class="chart-bar-track">
+                                    <div class="chart-bar-fill" style="width:74%"></div>
+                                </div><span class="chart-num">6,790</span>
+                            </div>
+                            <div class="chart-bar-row"><span>#music</span>
+                                <div class="chart-bar-track">
+                                    <div class="chart-bar-fill" style="width:48%"></div>
+                                </div><span class="chart-num">4,380</span>
+                            </div>
+                            <div class="chart-bar-row"><span>#dev</span>
+                                <div class="chart-bar-track">
+                                    <div class="chart-bar-fill" style="width:33%"></div>
+                                </div><span class="chart-num">3,014</span>
+                            </div>
+                            <div class="chart-bar-row"><span>#bot-spam</span>
+                                <div class="chart-bar-track">
+                                    <div class="chart-bar-fill" style="width:22%"></div>
+                                </div><span class="chart-num">2,087</span>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>System health</h2><span class="badge">1m</span>
+                            </div>
+                            <div
+                                style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items:center; padding: 8px 0;">
+                                <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                                    <div class="ring">
+                                        <svg viewBox="0 0 72 72">
+                                            <circle class="ring-bg" cx="36" cy="36" r="30" />
+                                            <circle class="ring-fg" cx="36" cy="36" r="30" stroke-dasharray="188.5"
+                                                stroke-dashoffset="40" />
+                                        </svg>
+                                        <div class="ring-text">78%</div>
+                                    </div>
+                                    <small style="color:var(--fg-dim); font-size:11.5px">CPU</small>
+                                </div>
+                                <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                                    <div class="ring">
+                                        <svg viewBox="0 0 72 72">
+                                            <circle class="ring-bg" cx="36" cy="36" r="30" />
+                                            <circle class="ring-fg" cx="36" cy="36" r="30" stroke-dasharray="188.5"
+                                                stroke-dashoffset="96" style="stroke: var(--info);" />
+                                        </svg>
+                                        <div class="ring-text">49%</div>
+                                    </div>
+                                    <small style="color:var(--fg-dim); font-size:11.5px">Memory</small>
+                                </div>
+                                <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                                    <div class="ring">
+                                        <svg viewBox="0 0 72 72">
+                                            <circle class="ring-bg" cx="36" cy="36" r="30" />
+                                            <circle class="ring-fg" cx="36" cy="36" r="30" stroke-dasharray="188.5"
+                                                stroke-dashoffset="144" style="stroke: var(--ok);" />
+                                        </svg>
+                                        <div class="ring-text">23%</div>
+                                    </div>
+                                    <small style="color:var(--fg-dim); font-size:11.5px">Disk</small>
+                                </div>
+                            </div>
+                            <div class="divider"></div>
+                            <div
+                                style="font-size: 12px; color: var(--fg-dim); display:flex; justify-content:space-between;">
+                                <span>Latency: <b style="color:var(--ok)" class="mono">42ms</b></span>
+                                <span>Events/s: <b class="mono">18.4</b></span>
+                                <span>Version: <b class="mono">v2.4.1</b></span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== SERVER STATS ==================== -->
+                <section class="page" data-page="stats">
+                    <div class="page-head">
+                        <h1>Server <span class="serif">stats.</span></h1>
+                        <p>Traffic, activity, and engagement across the last 7 days.</p>
+                    </div>
+
+                    <div class="chips">
+                        <button class="chip active">Today</button>
+                        <button class="chip">7d</button>
+                        <button class="chip">30d</button>
+                        <button class="chip">90d</button>
+                        <button class="chip">All time</button>
+                    </div>
+
+                    <div class="grid cols-4" style="margin-bottom: 20px;">
+                        <div class="stat lift">
+                            <div class="stat-label">Messages</div>
+                            <div class="stat-value num" id="stats-messages">--</div>
+                            <div class="stat-delta">+12.4% vs yesterday</div>
+                        </div>
+                        <div class="stat lift">
+                            <div class="stat-label">New members</div>
+                            <div class="stat-value num" id="stats-new-members">--</div>
+                            <div class="stat-delta">+8 retained</div>
+                        </div>
+                        <div class="stat lift">
+                            <div class="stat-label">Active users</div>
+                            <div class="stat-value num" id="stats-active-users">--</div>
+                            <div class="stat-delta">49% of server</div>
+                        </div>
+                        <div class="stat lift">
+                            <div class="stat-label">Commands run</div>
+                            <div class="stat-value num" id="stats-commands">--</div>
+                            <div class="stat-delta down">-3.1%</div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-bottom: 20px;">
+                        <div class="card-head">
+                            <h2>Activity heatmap</h2>
+                            <span class="badge">UTC · 7 days × 24 hours</span>
+                        </div>
+                        <div class="heatmap" id="heatmap"></div>
+                        <div
+                            style="display:flex; align-items:center; gap:10px; margin-top: 14px; font-size: 11px; color: var(--fg-faint); font-family: 'Geist Mono', monospace;">
+                            <span>less</span>
+                            <div style="display:flex; gap: 3px;">
+                                <div class="heat-cell" style="width:12px; height:12px; opacity:0.2"></div>
+                                <div class="heat-cell"
+                                    style="width:12px; height:12px; background: color-mix(in oklab, var(--accent) 30%, var(--bg-elev-2))">
+                                </div>
+                                <div class="heat-cell"
+                                    style="width:12px; height:12px; background: color-mix(in oklab, var(--accent) 55%, var(--bg-elev-2))">
+                                </div>
+                                <div class="heat-cell"
+                                    style="width:12px; height:12px; background: color-mix(in oklab, var(--accent) 80%, var(--bg-elev-2))">
+                                </div>
+                                <div class="heat-cell" style="width:12px; height:12px; background: var(--accent)"></div>
+                            </div>
+                            <span>more</span>
+                        </div>
+                    </div>
+
+                    <div class="grid cols-2">
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Top members</h2>
+                            </div>
+                            <div class="tbl-wrap">
+                                <table class="tbl">
+                                    <thead>
+                                        <tr>
+                                            <th>Member</th>
+                                            <th>Messages</th>
+                                            <th>Score</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="user-pill">
+                                                    <div class="avatar" style="background: oklch(0.72 0.17 280)">KZ
+                                                    </div>
+                                                    <div>
+                                                        <div class="uname">kozzy</div>
+                                                        <div class="uhandle">@kozzy</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="mono num">3,284</td>
+                                            <td>
+                                                <div class="chart-bar-track" style="width:80px">
+                                                    <div class="chart-bar-fill" style="width:100%"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="user-pill">
+                                                    <div class="avatar" style="background: oklch(0.6 0.22 220)">NV</div>
+                                                    <div>
+                                                        <div class="uname">nova</div>
+                                                        <div class="uhandle">@nova_7</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="mono num">2,941</td>
+                                            <td>
+                                                <div class="chart-bar-track" style="width:80px">
+                                                    <div class="chart-bar-fill" style="width:89%"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="user-pill">
+                                                    <div class="avatar" style="background: oklch(0.7 0.17 30)">MR</div>
+                                                    <div>
+                                                        <div class="uname">mira</div>
+                                                        <div class="uhandle">@mira.exe</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="mono num">2,088</td>
+                                            <td>
+                                                <div class="chart-bar-track" style="width:80px">
+                                                    <div class="chart-bar-fill" style="width:63%"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="user-pill">
+                                                    <div class="avatar" style="background: oklch(0.7 0.17 150)">JX</div>
+                                                    <div>
+                                                        <div class="uname">jax</div>
+                                                        <div class="uhandle">@jax_dev</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="mono num">1,612</td>
+                                            <td>
+                                                <div class="chart-bar-track" style="width:80px">
+                                                    <div class="chart-bar-fill" style="width:49%"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="user-pill">
+                                                    <div class="avatar" style="background: oklch(0.68 0.17 340)">RI
+                                                    </div>
+                                                    <div>
+                                                        <div class="uname">riko</div>
+                                                        <div class="uhandle">@riko</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="mono num">1,204</td>
+                                            <td>
+                                                <div class="chart-bar-track" style="width:80px">
+                                                    <div class="chart-bar-fill" style="width:36%"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Command usage</h2>
+                            </div>
+                            <div class="chart-bar-row"><span class="mono">/play</span>
+                                <div class="chart-bar-track">
+                                    <div class="chart-bar-fill" style="width:88%"></div>
+                                </div><span class="chart-num">612</span>
+                            </div>
+                            <div class="chart-bar-row"><span class="mono">/rank</span>
+                                <div class="chart-bar-track">
+                                    <div class="chart-bar-fill" style="width:64%"></div>
+                                </div><span class="chart-num">441</span>
+                            </div>
+                            <div class="chart-bar-row"><span class="mono">/ban</span>
+                                <div class="chart-bar-track">
+                                    <div class="chart-bar-fill" style="width:42%"></div>
+                                </div><span class="chart-num">289</span>
+                            </div>
+                            <div class="chart-bar-row"><span class="mono">/ask</span>
+                                <div class="chart-bar-track">
+                                    <div class="chart-bar-fill" style="width:38%"></div>
+                                </div><span class="chart-num">263</span>
+                            </div>
+                            <div class="chart-bar-row"><span class="mono">/poll</span>
+                                <div class="chart-bar-track">
+                                    <div class="chart-bar-fill" style="width:26%"></div>
+                                </div><span class="chart-num">178</span>
+                            </div>
+                            <div class="chart-bar-row"><span class="mono">/help</span>
+                                <div class="chart-bar-track">
+                                    <div class="chart-bar-fill" style="width:18%"></div>
+                                </div><span class="chart-num">120</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== LIVE CONSOLE ==================== -->
+                <section class="page" data-page="logs">
+                    <div class="page-head">
+                        <h1>Live <span class="serif">console.</span></h1>
+                        <p>Streaming logs from the bot process. Paused on hover.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Runtime stream</h2>
+                            <div style="display:flex; gap: 8px; margin-left:auto; align-items:center;">
+                                <button class="chip active">All</button>
+                                <button class="chip">info</button>
+                                <button class="chip">warn</button>
+                                <button class="chip">error</button>
+                                <button class="chip">cmd</button>
+                            </div>
+                        </div>
+                        <div class="searchbar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <input class="input" placeholder="Search logs (regex supported)..." />
+                        </div>
+                        <div class="console" id="console">
+                            <div class="log-line"><span class="log-time">21:38:22</span><span
+                                    class="log-level info">INFO</span><span class="log-msg">Gateway connected · shard 0
+                                    · heartbeat 42ms</span></div>
+                            <div class="log-line"><span class="log-time">21:38:24</span><span
+                                    class="log-level ok">READY</span><span class="log-msg">Logged in as kozzyx#2847 —
+                                    serving 1 guild, 1,247 users</span></div>
+                            <div class="log-line"><span class="log-time">21:38:25</span><span
+                                    class="log-level cmd">CMD</span><span class="log-msg">@nova invoked /play "lofi
+                                    beats" in #music</span></div>
+                            <div class="log-line"><span class="log-time">21:38:27</span><span
+                                    class="log-level info">INFO</span><span class="log-msg">Voice channel joined:
+                                    #music-lounge (region: us-west)</span></div>
+                            <div class="log-line"><span class="log-time">21:38:30</span><span
+                                    class="log-level warn">WARN</span><span class="log-msg">Rate limit bucket near cap:
+                                    POST /channels/:id/messages (8/10)</span></div>
+                            <div class="log-line"><span class="log-time">21:38:33</span><span
+                                    class="log-level info">INFO</span><span class="log-msg">Member joined: mira (id:
+                                    482019847182) · account age 3d</span></div>
+                            <div class="log-line"><span class="log-time">21:38:35</span><span
+                                    class="log-level cmd">CMD</span><span class="log-msg">@kozzy invoked /ban raid0r
+                                    reason="raid attempt"</span></div>
+                            <div class="log-line"><span class="log-time">21:38:36</span><span
+                                    class="log-level ok">OK</span><span class="log-msg">Member banned: raid0r — logged
+                                    to #mod-log</span></div>
+                            <div class="log-line"><span class="log-time">21:38:41</span><span
+                                    class="log-level warn">WARN</span><span class="log-msg">Automod flagged: invite link
+                                    in #general (user: spamr_99)</span></div>
+                            <div class="log-line"><span class="log-time">21:38:41</span><span
+                                    class="log-level info">INFO</span><span class="log-msg">Automod action:
+                                    message_deleted + warn_dm issued</span></div>
+                            <div class="log-line"><span class="log-time">21:38:47</span><span
+                                    class="log-level err">ERR</span><span class="log-msg">Failed to reach cloudflare
+                                    tunnel (retry 1/3) — reconnecting</span></div>
+                            <div class="log-line"><span class="log-time">21:38:49</span><span
+                                    class="log-level ok">OK</span><span class="log-msg">Tunnel reconnected:
+                                    rating-george-attempt-ashley.trycloudflare.com</span></div>
+                            <div class="log-line"><span class="log-time">21:38:52</span><span
+                                    class="log-level cmd">CMD</span><span class="log-msg">@riko invoked /rank —
+                                    responded with embed</span></div>
+                            <div class="log-line"><span class="log-time">21:38:55</span><span
+                                    class="log-level info">INFO</span><span class="log-msg">Scheduled task tick:
+                                    daily-stats-digest (next: 04:00 UTC)</span></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== MEMBERS ==================== -->
+                <section class="page" data-page="members">
+                    <div class="page-head">
+                        <h1>Members <span class="serif">directory.</span></h1>
+                        <p>Search, filter, and manage every human in the server.</p>
+                    </div>
+
+                    <div class="searchbar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                        <input class="input" placeholder="Search by username, ID, or role..." />
+                    </div>
+
+                    <div class="chips">
+                        <button class="chip active">All <span class="count" id="chip-all">--</span></button>
+                        <button class="chip">Online <span class="count" id="chip-online">--</span></button>
+                        <button class="chip">Admins <span class="count" id="chip-admins">--</span></button>
+                        <button class="chip">Mods <span class="count" id="chip-mods">--</span></button>
+                        <button class="chip">VIP <span class="count" id="chip-vip">--</span></button>
+                        <button class="chip">Bots <span class="count" id="chip-bots">--</span></button>
+                        <button class="chip">New (<7d) <span class="count" id="chip-new">--</span></button>
+                    </div>
+
+                    <div class="card">
+                        <div class="tbl-wrap">
+                            <table class="tbl">
+                                <thead>
+                                    <tr>
+                                        <th>Member</th>
+                                        <th>Roles</th>
+                                        <th>Joined</th>
+                                        <th>Last active</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="members-list">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== MOD LOG ==================== -->
+                <section class="page" data-page="modlog">
+                    <div class="page-head">
+                        <h1>Mod <span class="serif">log.</span></h1>
+                        <p>Every moderation action, timestamped and auditable.</p>
+                    </div>
+
+                    <div class="chips">
+                        <button class="chip active">All actions</button>
+                        <button class="chip">Bans <span class="count">14</span></button>
+                        <button class="chip">Kicks <span class="count">8</span></button>
+                        <button class="chip">Warns <span class="count">32</span></button>
+                        <button class="chip">Mutes <span class="count">21</span></button>
+                        <button class="chip">Unbans <span class="count">3</span></button>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:10px" id="modlog-list"></div>
+                </section>
+
+                <!-- ==================== AUTOMOD ==================== -->
+                <section class="page" data-page="automod">
+                    <div class="page-head">
+                        <h1>Automod <span class="serif">rules.</span></h1>
+                        <p>Pattern-based automated moderation. Enable, tune, or disable each rule.</p>
+                    </div>
+
+                    <div class="grid cols-2">
+                        <div class="rule-card">
+                            <div class="rule-head">
+                                <div class="rule-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round">
+                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                                    </svg></div>
+                                <div style="flex:1;">
+                                    <div class="rule-title">Invite link filter</div>
+                                    <div class="rule-sub">Deletes discord.gg / other server invites</div>
+                                </div>
+                                <label class="toggle"><input type="checkbox" checked><span
+                                        class="toggle-slider"></span></label>
+                            </div>
+                            <div style="font-size:12px; color:var(--fg-dim); display:flex; gap:10px; flex-wrap:wrap;">
+                                <span class="tag new">DELETE</span><span class="tag pending">WARN</span>
+                                <span style="margin-left:auto" class="mono">triggered 14× this week</span>
+                            </div>
+                        </div>
+                        <div class="rule-card">
+                            <div class="rule-head">
+                                <div class="rule-icon" style="background: var(--warn-soft); color: var(--warn)"><svg
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                                    </svg></div>
+                                <div style="flex:1;">
+                                    <div class="rule-title">Mention spam</div>
+                                    <div class="rule-sub">Blocks &gt; 5 mentions in a single message</div>
+                                </div>
+                                <label class="toggle"><input type="checkbox" checked><span
+                                        class="toggle-slider"></span></label>
+                            </div>
+                            <div style="font-size:12px; color:var(--fg-dim); display:flex; gap:10px; flex-wrap:wrap;">
+                                <span class="tag urgent">DELETE</span><span class="tag urgent">MUTE 10m</span>
+                                <span style="margin-left:auto" class="mono">triggered 3× this week</span>
+                            </div>
+                        </div>
+                        <div class="rule-card">
+                            <div class="rule-head">
+                                <div class="rule-icon" style="background: var(--danger-soft); color: var(--danger)"><svg
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <line x1="15" y1="9" x2="9" y2="15" />
+                                        <line x1="9" y1="9" x2="15" y2="15" />
+                                    </svg></div>
+                                <div style="flex:1;">
+                                    <div class="rule-title">Slur detection</div>
+                                    <div class="rule-sub">ML-based — matches 480+ variants</div>
+                                </div>
+                                <label class="toggle"><input type="checkbox" checked><span
+                                        class="toggle-slider"></span></label>
+                            </div>
+                            <div style="font-size:12px; color:var(--fg-dim); display:flex; gap:10px; flex-wrap:wrap;">
+                                <span class="tag urgent">DELETE</span><span class="tag urgent">BAN</span>
+                                <span style="margin-left:auto" class="mono">triggered 2× this week</span>
+                            </div>
+                        </div>
+                        <div class="rule-card">
+                            <div class="rule-head">
+                                <div class="rule-icon"
+                                    style="background: color-mix(in oklab, var(--info) 15%, transparent); color: var(--info)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                    </svg>
+                                </div>
+                                <div style="flex:1;">
+                                    <div class="rule-title">Caps lock filter</div>
+                                    <div class="rule-sub">Messages &gt; 70% caps, min 12 chars</div>
+                                </div>
+                                <label class="toggle"><input type="checkbox" checked><span
+                                        class="toggle-slider"></span></label>
+                            </div>
+                            <div style="font-size:12px; color:var(--fg-dim); display:flex; gap:10px; flex-wrap:wrap;">
+                                <span class="tag pending">WARN</span>
+                                <span style="margin-left:auto" class="mono">triggered 28× this week</span>
+                            </div>
+                        </div>
+                        <div class="rule-card">
+                            <div class="rule-head">
+                                <div class="rule-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round">
+                                        <polygon
+                                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                    </svg></div>
+                                <div style="flex:1;">
+                                    <div class="rule-title">Raid protection</div>
+                                    <div class="rule-sub">Auto-lockdown on &gt; 10 joins/min</div>
+                                </div>
+                                <label class="toggle"><input type="checkbox" checked><span
+                                        class="toggle-slider"></span></label>
+                            </div>
+                            <div style="font-size:12px; color:var(--fg-dim); display:flex; gap:10px; flex-wrap:wrap;">
+                                <span class="tag urgent">LOCKDOWN</span>
+                                <span style="margin-left:auto" class="mono">triggered 1× this month</span>
+                            </div>
+                        </div>
+                        <div class="rule-card" style="opacity:0.55;">
+                            <div class="rule-head">
+                                <div class="rule-icon" style="background: var(--bg-elev-3); color: var(--fg-faint)"><svg
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                    </svg></div>
+                                <div style="flex:1;">
+                                    <div class="rule-title">Phishing link database</div>
+                                    <div class="rule-sub">Cross-references 10k+ known bad URLs</div>
+                                </div>
+                                <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+                            </div>
+                            <div style="font-size:12px; color:var(--fg-dim); display:flex; gap:10px; flex-wrap:wrap;">
+                                <span class="tag">DISABLED</span>
+                                <span style="margin-left:auto" class="mono">—</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== ROLES ==================== -->
+                <section class="page" data-page="roles">
+                    <div class="page-head">
+                        <h1>Role <span class="serif">hierarchy.</span></h1>
+                        <p>Drag to reorder. Higher roles inherit fewer permissions.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="sub-head">
+                            <h3>Server roles · 11</h3>
+                            <div class="sub-actions">
+                                <button class="btn sm primary">+ Create role</button>
+                            </div>
+                        </div>
+                        <div class="tbl-wrap">
+                            <table class="tbl">
+                                <thead>
+                                    <tr>
+                                        <th>Role</th>
+                                        <th>Members</th>
+                                        <th>Key permissions</th>
+                                        <th>Color</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="roles-list">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== CHANNELS ==================== -->
+                <section class="page" data-page="channels">
+                    <div class="page-head">
+                        <h1>Channels <span class="serif">&amp; categories.</span></h1>
+                        <p>The full structural tree of your server.</p>
+                    </div>
+                    <div class="card" id="channels-list" style="padding:20px;"></div>
+                </section>
+
+                <!-- ==================== SEND MESSAGE ==================== -->
+                <section class="page" data-page="messaging">
+                    <div class="page-head">
+                        <h1>Send a <span class="serif">message.</span></h1>
+                        <p>Write as the bot. Plain text, markdown, or full embed.</p>
+                    </div>
+
+                    <div class="split">
+                        <div class="card">
+                            <div class="tabs">
+                                <div class="tab active" onclick="switchTab(this, 'compose-text')">Text</div>
+                                <div class="tab" onclick="switchTab(this, 'compose-embed')">Embed</div>
+                            </div>
+                            <label class="input-label">Channel</label>
+                            <select class="select" id="message-channel-select" style="margin-bottom: 14px;"></select>
+                            </select>
+                            <div id="compose-text">
+                                <label class="input-label">Message content</label>
+                                <textarea class="textarea" id="msg-body"
+                                    placeholder="Hello, world...&#10;&#10;Supports **markdown**, _italics_, and `code`."
+                                    oninput="updateEmbedPreview()">Hey everyone 👋 — new version of the bot just shipped.</textarea>
+                                <div class="input-hint">Up to 2000 characters. /help for syntax.</div>
+                            </div>
+                            <div id="compose-embed" style="display:none">
+                                <label class="input-label">Embed title</label>
+                                <input class="input" id="embed-title" value="Patch notes · v2.4.1"
+                                    oninput="updateEmbedPreview()" style="margin-bottom: 12px;" />
+                                <label class="input-label">Embed description</label>
+                                <textarea class="textarea" id="embed-desc" oninput="updateEmbedPreview()">• Fixed tunnel reconnect bug
+• Added /poll command
+• Improved automod detection 2×</textarea>
+                                <label class="input-label" style="margin-top: 12px;">Accent color</label>
+                                <input type="color" value="#8b5cf6" id="embed-color"
+                                    style="width: 60px; height: 34px; background: transparent; border: 1px solid var(--line); border-radius: 6px;"
+                                    oninput="updateEmbedPreview()" />
+                            </div>
+                            <div class="divider"></div>
+                            <div style="display:flex; gap: 8px;">
+                                <button class="btn primary" onclick="sendMessage()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <line x1="22" y1="2" x2="11" y2="13" />
+                                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                    </svg>
+                                    Send
+                                </button>
+                                <button class="btn">Schedule</button>
+                                <button class="btn ghost" style="margin-left:auto">Save draft</button>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Preview</h2><span class="badge">DISCORD</span>
+                            </div>
+                            <div class="discord-preview">
+                                <div class="discord-msg">
+                                    <div class="avatar" style="background: var(--accent)">B</div>
+                                    <div class="content">
+                                        <div class="name">kozzyx <span class="bot-tag">BOT</span><span class="timestamp"
+                                                id="preview-time">Today at 9:42 PM</span></div>
+                                        <div id="preview-text">Hey everyone 👋 — new version of the bot just shipped.
+                                        </div>
+                                        <div id="preview-embed" style="display:none; margin-top:8px">
+                                            <div class="embed" id="embed-box">
+                                                <div class="embed-title" id="embed-prev-title">Patch notes · v2.4.1
+                                                </div>
+                                                <div class="embed-desc" id="embed-prev-desc">• Fixed tunnel reconnect
+                                                    bug
+                                                    • Added /poll command
+                                                    • Improved automod detection 2×</div>
+                                                <div class="embed-footer">kozzyx · v2.4.1</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== TICKETS ==================== -->
+                <section class="page" data-page="tickets">
+                    <div class="page-head">
+                        <h1>Support <span class="serif">tickets.</span></h1>
+                        <p>3 open · 1 urgent · avg response 14m</p>
+                    </div>
+
+                    <div class="grid cols-3" style="margin-bottom:20px">
+                        <div class="stat lift">
+                            <div class="stat-label">Open</div>
+                            <div class="stat-value num" style="color:var(--ok)">3</div>
+                        </div>
+                        <div class="stat lift">
+                            <div class="stat-label">Pending</div>
+                            <div class="stat-value num" style="color:var(--warn)">1</div>
+                        </div>
+                        <div class="stat lift">
+                            <div class="stat-label">Resolved (7d)</div>
+                            <div class="stat-value num">24</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="sub-head">
+                            <h3>Open tickets</h3>
+                            <div class="sub-actions"><button class="btn sm">Filter</button><button
+                                    class="btn sm primary">+ New category</button></div>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:10px">
+                            <div class="ticket-card">
+                                <div class="ticket-head">
+                                    <span class="ticket-id">#1024</span>
+                                    <span class="ticket-title">Bot not joining voice channel</span>
+                                    <span class="tag urgent">URGENT</span>
+                                </div>
+                                <div class="ticket-meta">
+                                    <span>by @nova_7</span><span>opened 42m ago</span><span>category: bugs</span><span>3
+                                        replies</span>
+                                </div>
+                            </div>
+                            <div class="ticket-card">
+                                <div class="ticket-head">
+                                    <span class="ticket-id">#1023</span>
+                                    <span class="ticket-title">Can I get the VIP role?</span>
+                                    <span class="tag new">NEW</span>
+                                </div>
+                                <div class="ticket-meta">
+                                    <span>by @mira.exe</span><span>opened 1h ago</span><span>category:
+                                        roles</span><span>0 replies</span>
+                                </div>
+                            </div>
+                            <div class="ticket-card">
+                                <div class="ticket-head">
+                                    <span class="ticket-id">#1022</span>
+                                    <span class="ticket-title">Feature request: /poll with timer</span>
+                                    <span class="tag pending">PENDING</span>
+                                </div>
+                                <div class="ticket-meta">
+                                    <span>by @jax_dev</span><span>opened 4h ago</span><span>category:
+                                        feature</span><span>6 replies</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== COMMANDS ==================== -->
+                <section class="page" data-page="commands">
+                    <div class="page-head">
+                        <h1>Commands <span class="serif">registry.</span></h1>
+                        <p>All slash commands and their backing handlers.</p>
+                    </div>
+                    <div class="searchbar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                        <input class="input" placeholder="Find a command..." />
+                    </div>
+                    <div class="chips">
+                        <button class="chip active">All <span class="count">23</span></button>
+                        <button class="chip">Moderation <span class="count">6</span></button>
+                        <button class="chip">Music <span class="count">5</span></button>
+                        <button class="chip">Fun <span class="count">7</span></button>
+                        <button class="chip">Utility <span class="count">5</span></button>
+                    </div>
+                    <div class="grid" style="gap:10px" id="commands-list"></div>
+                </section>
+
+                <!-- ==================== SCHEDULED TASKS ==================== -->
+                <section class="page" data-page="scheduled">
+                    <div class="page-head">
+                        <h1>Scheduled <span class="serif">tasks.</span></h1>
+                        <p>Cron-driven jobs running inside the bot.</p>
+                    </div>
+                    <div class="sub-head">
+                        <h3>4 active tasks</h3>
+                        <div class="sub-actions"><button class="btn sm primary">+ New task</button></div>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap: 10px;">
+                        <div class="task-row">
+                            <div>
+                                <div class="task-name">Daily stats digest</div>
+                                <div class="task-desc">Posts a server summary to #announcements</div>
+                            </div>
+                            <div class="task-cron">0 4 * * *</div>
+                            <span class="tag open">ACTIVE</span>
+                            <label class="toggle"><input type="checkbox" checked><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                        <div class="task-row">
+                            <div>
+                                <div class="task-name">Backup database</div>
+                                <div class="task-desc">Snapshots to R2 bucket kozzyx-backups</div>
+                            </div>
+                            <div class="task-cron">0 */6 * * *</div>
+                            <span class="tag open">ACTIVE</span>
+                            <label class="toggle"><input type="checkbox" checked><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                        <div class="task-row">
+                            <div>
+                                <div class="task-name">Warn expiry sweep</div>
+                                <div class="task-desc">Clears warnings older than 30 days</div>
+                            </div>
+                            <div class="task-cron">*/15 * * * *</div>
+                            <span class="tag open">ACTIVE</span>
+                            <label class="toggle"><input type="checkbox" checked><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                        <div class="task-row">
+                            <div>
+                                <div class="task-name">Weekly leaderboard</div>
+                                <div class="task-desc">Top 10 posters · dropped to #general Monday morning</div>
+                            </div>
+                            <div class="task-cron">0 10 * * MON</div>
+                            <span class="tag open">ACTIVE</span>
+                            <label class="toggle"><input type="checkbox" checked><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                        <div class="task-row" style="opacity:0.6">
+                            <div>
+                                <div class="task-name">Birthday pings</div>
+                                <div class="task-desc">Wishes members happy birthday at 9am local</div>
+                            </div>
+                            <div class="task-cron">0 9 * * *</div>
+                            <span class="tag">PAUSED</span>
+                            <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== AI (CLAUDE) ==================== -->
+                <section class="page" data-page="ai">
+                    <div class="page-head">
+                        <h1>AI <span class="serif">engine.</span></h1>
+                        <p>Powered by Claude. Configure how the bot answers.</p>
+                    </div>
+                    <div class="split">
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Model configuration</h2>
+                            </div>
+                            <label class="input-label">Model</label>
+                            <select class="select" style="margin-bottom:14px">
+                                <option>claude-sonnet-4-6</option>
+                                <option>claude-opus-4-7</option>
+                                <option>claude-haiku-4-5</option>
+                            </select>
+                            <label class="input-label">System prompt</label>
+                            <textarea class="textarea"
+                                style="min-height: 140px">You are kozzyx, a witty, helpful assistant for the kozzy's lair Discord server. Keep replies under 3 sentences unless asked for more. Match the user's tone. Never use emoji in replies unless directly asked.</textarea>
+                            <div class="divider"></div>
+                            <label class="input-label">Temperature · <span class="mono num"
+                                    id="temp-value">0.7</span></label>
+                            <input class="slider" type="range" min="0" max="1" step="0.05" value="0.7"
+                                oninput="document.getElementById('temp-value').textContent = this.value" />
+                            <div class="input-hint">Lower = more deterministic · Higher = more creative</div>
+                            <div class="divider"></div>
+                            <label class="input-label">Max tokens · <span class="mono num"
+                                    id="tok-value">1024</span></label>
+                            <input class="slider" type="range" min="128" max="4096" step="128" value="1024"
+                                oninput="document.getElementById('tok-value').textContent = this.value" />
+                        </div>
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Recent conversations</h2><span class="badge">TODAY</span>
+                            </div>
+                            <div class="chat-msg">
+                                <div class="avatar" style="background: oklch(0.68 0.17 340)">RI</div>
+                                <div class="chat-bubble">What's the biggest star you can see from earth?</div>
+                            </div>
+                            <div class="chat-msg ai" style="animation-delay:0.1s">
+                                <div class="avatar" style="background: var(--accent)">B</div>
+                                <div class="chat-bubble">By apparent brightness, that's Sirius (magnitude -1.46). By
+                                    actual diameter, UY Scuti is one of the largest known — though it's far too dim for
+                                    the naked eye.</div>
+                            </div>
+                            <div class="chat-msg" style="animation-delay:0.2s">
+                                <div class="avatar" style="background: oklch(0.6 0.22 220)">NV</div>
+                                <div class="chat-bubble">write me a haiku about pm2</div>
+                            </div>
+                            <div class="chat-msg ai" style="animation-delay:0.3s">
+                                <div class="avatar" style="background: var(--accent)">B</div>
+                                <div class="chat-bubble">Processes reborn —<br>daemon watches every thread,<br>logs
+                                    bloom through the night.</div>
+                            </div>
+                            <div class="divider"></div>
+                            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap: 14px; font-size: 12px;">
+                                <div>
+                                    <div style="color:var(--fg-dim); margin-bottom:4px;">Requests today</div>
+                                    <div class="mono num" style="font-size:16px; font-weight:600">412</div>
+                                </div>
+                                <div>
+                                    <div style="color:var(--fg-dim); margin-bottom:4px;">Tokens used</div>
+                                    <div class="mono num" style="font-size:16px; font-weight:600">184k</div>
+                                </div>
+                                <div>
+                                    <div style="color:var(--fg-dim); margin-bottom:4px;">Cost est.</div>
+                                    <div class="mono num" style="font-size:16px; font-weight:600">$2.41</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== BOT CONFIG ==================== -->
+                <section class="page" data-page="config">
+                    <div class="page-head">
+                        <h1>Bot <span class="serif">config.</span></h1>
+                        <p>Core runtime settings. Changes apply after /restart.</p>
+                    </div>
+                    <div class="card" style="margin-bottom:20px">
+                        <div class="card-head">
+                            <h2>General</h2>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-text"><b>Command prefix</b><small>Legacy prefix-based commands
+                                    (slash always enabled)</small></div>
+                            <input class="input mono" value="!" style="width: 80px; text-align:center" />
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-text"><b>Default language</b><small>Used for embeds and system
+                                    messages</small></div>
+                            <select class="select" style="width: 140px;">
+                                <option>English</option>
+                                <option>Hungarian</option>
+                                <option>Spanish</option>
+                                <option>German</option>
+                            </select>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-text"><b>Timezone</b><small>Affects scheduled tasks &amp;
+                                    timestamps</small></div>
+                            <select class="select" style="width: 200px;">
+                                <option>UTC</option>
+                                <option>America/Los_Angeles</option>
+                                <option>Europe/Budapest</option>
+                                <option>Asia/Tokyo</option>
+                            </select>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-text"><b>Log level</b><small>How verbose the runtime console
+                                    is</small></div>
+                            <select class="select" style="width: 140px;">
+                                <option>info</option>
+                                <option>debug</option>
+                                <option>warn</option>
+                                <option>error</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-bottom:20px">
+                        <div class="card-head">
+                            <h2>Secrets</h2><span class="badge">MASKED</span>
+                        </div>
+                        <dl class="kv">
+                            <dt>Client ID</dt>
+                            <dd class="mono">1094827461028374650</dd>
+                            <dt>Bot token</dt>
+                            <dd class="mono">••••••••••••••••••••••• <button class="btn sm ghost"
+                                    style="margin-left:8px">Reveal</button></dd>
+                            <dt>Cloudflare tunnel</dt>
+                            <dd class="mono" style="font-size:11.5px">rating-george-attempt-ashley.trycloudflare.com
+                            </dd>
+                            <dt>API key</dt>
+                            <dd class="mono">Balazs**** <button class="btn sm ghost"
+                                    style="margin-left:8px">Rotate</button>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="card" style="margin-bottom:20px">
+                        <div class="card-head">
+                            <h2>Feature toggles</h2>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-text"><b>Music player</b><small>Enable /play, /queue, /skip</small>
+                            </div><label class="toggle"><input type="checkbox" checked><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-text"><b>Leveling / XP</b><small>Award XP for messages &amp; voice
+                                    time</small></div><label class="toggle"><input type="checkbox" checked><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-text"><b>AI assistant</b><small>Slash command /ask with
+                                    Claude</small></div><label class="toggle"><input type="checkbox" checked><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-text"><b>Starboard</b><small>Repost messages with enough ⭐
+                                    reactions</small></div><label class="toggle"><input type="checkbox"><span
+                                    class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+                    <div class="danger-zone">
+                        <h3>Danger zone</h3>
+                        <div class="setting-row">
+                            <div class="setting-row-text"><b>Restart bot</b><small>Graceful shutdown &amp; PM2
+                                    auto-revive</small></div>
+                            <button class="btn warn" onclick="toast('Bot restart queued', 'ok')">Restart</button>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-text"><b>Wipe user data</b><small>Clears XP, warn history, and
+                                    custom prefs</small></div>
+                            <button class="btn danger">Wipe</button>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-text"><b>Leave this server</b><small>Bot will need re-invite to
+                                    rejoin</small></div>
+                            <button class="btn danger">Leave</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== DEPLOY & CI/CD ==================== -->
+                <section class="page" data-page="deploy">
+                    <div class="page-head">
+                        <h1>Deploy <span class="serif">&amp; CI/CD.</span></h1>
+                        <p>Ship new code from your repo straight to the VM.</p>
+                    </div>
+
+                    <div class="grid cols-3" style="margin-bottom: 20px;">
+                        <div class="stat lift">
+                            <div class="stat-label">Branch</div>
+                            <div class="stat-value mono" style="font-size:20px">main</div>
+                            <div class="stat-delta">ahead by 2 commits</div>
+                        </div>
+                        <div class="stat lift">
+                            <div class="stat-label">Last deploy</div>
+                            <div class="stat-value mono num" style="font-size:20px">2h ago</div>
+                            <div class="stat-delta">v2.4.1 · 42s</div>
+                        </div>
+                        <div class="stat lift">
+                            <div class="stat-label">Status</div>
+                            <div class="stat-value" style="color:var(--ok); font-size:20px">Healthy</div>
+                            <div class="stat-delta">all checks pass</div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-bottom: 20px;">
+                        <div class="card-head">
+                            <h2>Pipeline</h2><span class="badge">LATEST RUN</span>
+                        </div>
+                        <div class="pipeline">
+                            <div class="pipe-step done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="3" stroke-linecap="round">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Checkout</div>
+                            <svg class="pipe-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round">
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                            <div class="pipe-step done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="3" stroke-linecap="round">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Install</div>
+                            <svg class="pipe-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round">
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                            <div class="pipe-step done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="3" stroke-linecap="round">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>Test</div>
+                            <svg class="pipe-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round">
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                            <div class="pipe-step running"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5" stroke-linecap="round">
+                                    <polyline points="23 4 23 10 17 10" />
+                                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10" />
+                                </svg>Deploy</div>
+                            <svg class="pipe-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round">
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                            <div class="pipe-step">Health check</div>
+                        </div>
+                    </div>
+
+                    <div class="split">
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Build logs</h2>
+                            </div>
+                            <div class="code">
+                                <span style="color: var(--fg-faint)">$</span> git pull origin main<br>
+                                Already up to date.<br>
+                                <span style="color: var(--fg-faint)">$</span> npm ci<br>
+                                <span style="color: var(--ok)">✓</span> 284 packages audited in 3.2s<br>
+                                <span style="color: var(--fg-faint)">$</span> npm test<br>
+                                <span style="color: var(--ok)">✓</span> 128 passing <span
+                                    style="color:var(--fg-faint)">(2.8s)</span><br>
+                                <span style="color: var(--fg-faint)">$</span> pm2 restart KozzyX<br>
+                                <span style="color: var(--ok)">✓</span> Process KozzyX reloaded<br>
+                                <span style="color: var(--info)">[info]</span> Reconnected to gateway · 42ms
+                                heartbeat<br>
+                                <span style="color: var(--warn)">[warn]</span> Tunnel URL rotated:
+                                rating-george-attempt-ashley.trycloudflare.com
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Actions</h2>
+                            </div>
+                            <div class="action-grid">
+                                <button class="action-card" onclick="toast('Pulling latest from main...', 'ok')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <polyline points="7 10 12 15 17 10" />
+                                        <line x1="12" y1="15" x2="12" y2="3" />
+                                        <path d="M20 18v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2" />
+                                    </svg>
+                                    <b>Pull latest</b>
+                                    <small>git pull &amp; restart</small>
+                                </button>
+                                <button class="action-card" onclick="toast('Deploy queued', 'ok')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <line x1="22" y1="2" x2="11" y2="13" />
+                                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                    </svg>
+                                    <b>Deploy now</b>
+                                    <small>Run full pipeline</small>
+                                </button>
+                                <button class="action-card" onclick="toast('Rollback initiated', 'ok')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <polyline points="1 4 1 10 7 10" />
+                                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                                    </svg>
+                                    <b>Rollback</b>
+                                    <small>Revert to v2.4.0</small>
+                                </button>
+                                <button class="action-card" onclick="toast('Restarting...', 'ok')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round">
+                                        <polyline points="23 4 23 10 17 10" />
+                                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10" />
+                                    </svg>
+                                    <b>Restart PM2</b>
+                                    <small>Warm restart only</small>
+                                </button>
+                            </div>
+                            <div class="divider"></div>
+                            <label class="input-label">Webhook URL</label>
+                            <div style="display:flex; gap:6px">
+                                <input class="input mono" style="font-size:11px"
+                                    value="https://kozzyx.bazsi9849.workers.dev/hooks/gh" readonly />
+                                <button class="btn" onclick="toast('Copied', 'ok')">Copy</button>
+                            </div>
+                            <div class="input-hint">Push → auto-deploy via GitHub webhook</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== MASS BROADCASTER ==================== -->
+                <section class="page" data-page="broadcaster">
+                    <div class="page-head">
+                        <h1>Mass <span class="serif">broadcaster.</span></h1>
+                        <p>Send a message to all text channels at once. Use with caution.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Compose Broadcast</h2>
+                            <span class="badge">DASHBOARD EXCLUSIVE</span>
+                        </div>
+                        <label class="input-label">Message Content</label>
+                        <textarea id="broadcast-msg" class="textarea"
+                            placeholder="Hello everyone! This is a broadcast from the dashboard."></textarea>
+                        <div class="divider"></div>
+                        <div style="display:flex; gap:12px; align-items:center">
+                            <button class="btn primary" onclick="sendBroadcast()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                                Send to All Channels
+                            </button>
+                            <label class="toggle"><input type="checkbox" id="broadcast-embed"><span
+                                    class="toggle-slider"></span></label>
+                            <span style="font-size:12px; color:var(--fg-dim)">Send as Embed</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== ANALYTICS ==================== -->
+                <section class="page" data-page="analytics">
+                    <div class="page-head">
+                        <h1>Advanced <span class="serif">analytics.</span></h1>
+                        <p>Detailed insight into server growth and activity.</p>
+                    </div>
+                    <div class="grid cols-2">
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Growth</h2>
+                            </div>
+                            <div style="height:200px; display:flex; align-items:flex-end; gap:8px; padding-bottom:20px">
+                                <div class="skeleton" style="width:100%; height:40%"></div>
+                                <div class="skeleton" style="width:100%; height:60%"></div>
+                                <div class="skeleton" style="width:100%; height:55%"></div>
+                                <div class="skeleton" style="width:100%; height:75%"></div>
+                                <div class="skeleton" style="width:100%; height:90%"></div>
+                            </div>
+                            <p style="font-size:12px; color:var(--fg-dim); text-align:center">Member growth over last 30
+                                days (Simulated)</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Activity Heatmap</h2>
+                            </div>
+                            <div class="heatmap">
+                                <div class="heat-cell" style="opacity: 0.1"></div>
+                                <div class="heat-cell" style="opacity: 0.4"></div>
+                                <div class="heat-cell" style="opacity: 0.8; background: var(--accent)"></div>
+                                <div class="heat-cell" style="opacity: 0.2"></div>
+                                <div class="heat-cell" style="opacity: 0.9; background: var(--accent)"></div>
+                                <div class="heat-cell" style="opacity: 0.5"></div>
+                                <div class="heat-cell" style="opacity: 0.1"></div>
+                            </div>
+                            <p style="font-size:12px; color:var(--fg-dim); text-align:center; margin-top:12px">Hourly
+                                activity distribution (UTC)</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== TRIGGERS ==================== -->
+                <section class="page" data-page="triggers">
+                    <div class="page-head">
+                        <h1>Custom <span class="serif">Triggers.</span></h1>
+                        <p>Configure dashboard-exclusive keyword responses.</p>
+                    </div>
+
+                    <div class="grid cols-2">
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Active Triggers</h2>
+                                <span class="badge" id="trigger-count">0</span>
+                            </div>
+                            <div class="tbl-wrap">
+                                <table class="tbl">
+                                    <thead>
+                                        <tr>
+                                            <th>Trigger Keyword</th>
+                                            <th>Response</th>
+                                            <th style="text-align:right">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="triggers-list">
+                                        <!-- Triggers injected here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Add Trigger</h2>
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:16px">
+                                <div>
+                                    <label class="nav-section-label"
+                                        style="padding:0; margin-bottom:8px; display:block">Keyword</label>
+                                    <input type="text" id="trigger-key" class="input mono" placeholder="e.g. hello">
+                                </div>
+                                <div>
+                                    <label class="nav-section-label"
+                                        style="padding:0; margin-bottom:8px; display:block">Response</label>
+                                    <textarea id="trigger-resp" class="textarea"
+                                        placeholder="What should the bot say?"></textarea>
+                                </div>
+                                <button class="btn primary" onclick="addTrigger()">Create Trigger</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Guild Selector Modal -->
+    <div id="guild-selector-overlay">
+        <div class="guild-modal">
+            <h2 style="margin-top:0">Select a <span class="serif">Server.</span></h2>
+            <p style="color:var(--fg-dim); font-size:14px">Choose a server to manage with KozzyX.</p>
+            <div class="guild-list" id="guild-list-container">
+                <!-- Guilds will be injected here -->
+                <div class="skeleton" style="height:60px; border-radius:16px; margin-bottom:10px"></div>
+                <div class="skeleton" style="height:60px; border-radius:16px; margin-bottom:10px"></div>
+            </div>
+            <div style="margin-top:20px; display:flex; justify-content:center">
+                <button class="btn sm ghost" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = {
+            // Automatically detect base URL, fallback to localhost
+            base: window.location.origin.includes('localhost') ? window.location.origin : (window.location.origin.includes('workers.dev') ? 'https://kozzyx-api.bazsi9849.workers.dev' : 'http://localhost:3456'),
+            key: 'Balazs9849'
+        };
+
+        let currentGuildId = localStorage.getItem('kozzyx_guild_id');
+
+        // Utility: API Fetch
+        async function apiFetch(path, options = {}) {
+            const token = localStorage.getItem('kozzyx_session');
+            try {
+                const res = await fetch(`${API.base}${path}`, {
+                    ...options,
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'x-api-key': API.key,
+                        'x-guild-id': currentGuildId,
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    }
+                });
+                if (res.status === 401 && token) {
+                    logout();
+                    return;
+                }
+                if (res.status === 403) {
+                    toast('Access Denied: Missing Permissions', 'error');
+                    throw new Error('Access Denied');
+                }
+                if (res.status === 404) {
+                    toast('Backend route not found.', 'error');
+                    throw new Error(`API Error: 404`);
+                }
+                if (!res.ok) throw new Error(`API Error: ${res.status}`);
+                return await res.json();
+            } catch (networkErr) {
+                console.error(`[API] Fetch failed for ${path}:`, networkErr);
+                throw networkErr;
+            }
+        }
+
+        // UI Helpers
+        function switchTab(el, tabId) {
+            const tabs = el.parentElement.querySelectorAll('.tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+
+            // Toggle visibility of related content containers
+            const container = el.closest('.card');
+            if (container) {
+                const contents = container.querySelectorAll('[id^="compose-"]');
+                contents.forEach(c => c.style.display = 'none');
+                const target = document.getElementById(tabId);
+                if (target) target.style.display = 'block';
+            }
+        }
+
+        function updateEmbedPreview() {
+            const content = document.getElementById('msg-body').value;
+            const preview = document.getElementById('preview-text');
+            if (preview) preview.textContent = content || '...';
+            console.log('[Preview] Live update triggered');
+        }
+
+        // --- AUTH LOGIC ---
+        async function startLogin() {
+            const res = await fetch(`${API.base}/api/auth/login`);
+            const { url } = await res.json();
+            window.location.href = url;
+        }
+
+        async function handleCallback(code) {
+            try {
+                const res = await fetch(`${API.base}/api/auth/callback`, {
+                    method: 'POST',
+                    body: JSON.stringify({ code }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                if (data.token) {
+                    localStorage.setItem('kozzyx_session', data.token);
+                    localStorage.setItem('kozzyx_user', JSON.stringify(data.user));
+                    window.location.href = window.location.pathname; // Clean URL
+                } else {
+                    alert(data.error || 'Login failed');
+                }
+            } catch (err) {
+                alert('Auth failed: ' + err.message);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('kozzyx_session');
+            localStorage.removeItem('kozzyx_user');
+            localStorage.removeItem('kozzyx_guild_id');
+            currentGuildId = null;
+            window.location.hash = '';
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('guild-selector-overlay').style.display = 'none';
+        }
+
+        // Premium Toast utility
+        function toast(msg, type = 'ok') {
+            console.log(`[Toast] ${type.toUpperCase()}: ${msg}`);
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+
+            const icon = type === 'ok' ? '✅' : type === 'error' ? '❌' : type === 'warn' ? '⚠️' : 'ℹ️';
+            t.innerHTML = `<span>${icon}</span> <span>${msg}</span>`;
+
+            document.body.appendChild(t);
+            requestAnimationFrame(() => t.classList.add('show'));
+
+            setTimeout(() => {
+                t.classList.remove('show');
+                setTimeout(() => t.remove(), 400);
+            }, 4000);
+        }
+
+        async function restartBot() {
+            if (!confirm('Restart the bot? It will be offline for a few seconds.')) return;
+            try {
+                toast('Restarting bot...', 'warn');
+                await apiFetch('/api/restart', { method: 'POST' });
+                setTimeout(() => window.location.reload(), 3000);
+            } catch (err) {
+                toast('Restart failed', 'error');
+            }
+        }
+
+        async function wipeData() {
+            if (!confirm('DANGER: This will wipe all messages tracked and server-specific settings. Continue?')) return;
+            try {
+                toast('Wiping data...', 'error');
+                await apiFetch('/api/wipe', { method: 'POST' });
+                refreshStats();
+            } catch (err) {
+                toast('Wipe failed', 'error');
+            }
+        }
+
+        async function leaveServer() {
+            if (!confirm('DANGER: The bot will leave this server. You will need to re-invite it.')) return;
+            try {
+                toast('Leaving server...', 'error');
+                await apiFetch('/api/leave', { method: 'POST' });
+                window.location.href = '/';
+            } catch (err) {
+                toast('Action failed', 'error');
+            }
+        }
+
+        function revealToken(btn) {
+            btn.textContent = 'MTA5NDgyNzQ2MTAyODM3NDY1MA.GzX1zR.uUo8...';
+            btn.classList.remove('ghost');
+            btn.style.color = 'var(--accent)';
+            toast('Token revealed (Masked for safety)', 'warn');
+        }
+
+        function rotateApiKey() {
+            toast('API Key rotated. Update your environment variables.', 'ok');
+        }
+
+        // Initialize interactivity for all buttons
+        function bindInteractivity() {
+            // Prefix Save
+            const prefixInput = document.querySelector('[data-page="config"] .input.mono');
+            if (prefixInput) {
+                prefixInput.addEventListener('change', savePrefix);
+            }
+
+            // Danger buttons
+            document.querySelectorAll('.btn.warn').forEach(b => {
+                if (b.innerText === 'Restart') b.onclick = restartBot;
+            });
+            document.querySelectorAll('.btn.danger').forEach(b => {
+                if (b.innerText === 'Wipe') b.onclick = wipeData;
+                if (b.innerText === 'Leave') b.onclick = leaveServer;
+            });
+
+            // Secret buttons
+            document.querySelectorAll('.btn.sm.ghost').forEach(b => {
+                if (b.innerText === 'Reveal') b.onclick = () => revealToken(b);
+                if (b.innerText === 'Rotate') b.onclick = rotateApiKey;
+            });
+        }
+
+        function renderHeatmap() {
+            const el = document.getElementById('heatmap');
+            if (!el) return;
+            el.innerHTML = '';
+            el.style.display = 'grid';
+            el.style.gridTemplateColumns = 'repeat(52, 1fr)';
+            el.style.gap = '3px';
+
+            for (let i = 0; i < 52 * 7; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'heat-cell';
+                cell.style.width = '100%';
+                cell.style.aspectRatio = '1/1';
+                cell.style.borderRadius = '2px';
+
+                const val = Math.random();
+                if (val > 0.9) cell.style.background = 'var(--accent)';
+                else if (val > 0.7) cell.style.background = 'oklch(0.72 0.17 280 / 0.7)';
+                else if (val > 0.5) cell.style.background = 'oklch(0.72 0.17 280 / 0.4)';
+                else if (val > 0.3) cell.style.background = 'oklch(0.72 0.17 280 / 0.2)';
+                else cell.style.background = 'var(--bg-elev-2)';
+
+                el.appendChild(cell);
+            }
+        }
+
+        async function showGuildSelector() {
+            const overlay = document.getElementById('guild-selector-overlay');
+            const container = document.getElementById('guild-list-container');
+            overlay.style.display = 'flex';
+            container.innerHTML = '<div class="skeleton" style="height:60px; border-radius:16px; margin-bottom:10px"></div><div class="skeleton" style="height:60px; border-radius:16px; margin-bottom:10px"></div>';
+
+            try {
+                const guilds = await apiFetch('/api/auth/guilds');
+                container.innerHTML = '';
+                if (guilds.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; color:var(--fg-dim)">No compatible servers found. Make sure you have Manage Server permission and the bot is invited.</p>';
+                    return;
+                }
+                guilds.forEach(g => {
+                    const item = document.createElement('div');
+                    item.className = 'guild-item';
+                    item.onclick = () => selectGuild(g.id);
+                    item.innerHTML = `
+                        <div class="guild-icon">
+                            ${g.icon ? `<img src="${g.icon}" style="width:100%;height:100%;border-radius:12px">` : g.name.substring(0, 1)}
+                        </div>
+                        <div class="guild-info">
+                            <h3>${g.name}</h3>
+                            <p>${g.memberCount} members</p>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            } catch (err) {
+                container.innerHTML = `<p style="color:var(--error); text-align:center">Failed to load guilds: ${err.message}</p>`;
+            }
+        }
+
+        function selectGuild(id) {
+            currentGuildId = id;
+            localStorage.setItem('kozzyx_guild_id', id);
+            document.getElementById('guild-selector-overlay').style.display = 'none';
+            initDashboard();
+            toast('Server switched successfully', 'ok');
+        }
+
+        function checkAuth() {
+            const token = localStorage.getItem('kozzyx_session');
+            let user = {};
+            try {
+                user = JSON.parse(localStorage.getItem('kozzyx_user') || '{}');
+            } catch (e) { console.error('Failed to parse user data'); }
+
+            if (token) {
+                console.log('[Auth] Logged in as:', user.username || 'Admin');
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+
+                // Update profile
+                const nameEl = document.getElementById('user-name');
+                const tagEl = document.getElementById('user-tag');
+                if (nameEl) nameEl.textContent = user.username || 'Admin';
+                if (tagEl) tagEl.textContent = user.username ? `@${user.username}` : '@admin';
+
+                if (user.avatar && user.id) {
+                    const avatarEl = document.getElementById('user-avatar');
+                    if (avatarEl) avatarEl.innerHTML = `<img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" style="width:100%;height:100%;border-radius:50%">`;
+                }
+
+                // OWNER CHECK for Engine Tab
+                const engineNav = document.getElementById('nav-engine');
+                if (engineNav) {
+                    if (user.isOwner) engineNav.style.display = 'flex';
+                    else engineNav.style.display = 'none';
+                }
+
+                if (!currentGuildId) {
+                    showGuildSelector();
+                } else {
+                    initDashboard();
+                }
+            } else {
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('app').style.display = 'none';
+            }
+        }
+        async function refreshTriggers() {
+            try {
+                const triggers = await apiFetch('/api/triggers');
+                const tbody = document.getElementById('triggers-list');
+                const countEl = document.getElementById('trigger-count');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+                if (countEl) countEl.textContent = triggers.length;
+
+                triggers.forEach(t => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="mono">${t.trigger}</td>
+                        <td style="font-size:13px">${t.response}</td>
+                        <td style="text-align:right"><button class="btn sm danger" onclick="deleteTrigger('${t.id}')">Delete</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) { console.error('Failed to fetch triggers:', err); }
+        }
+
+        async function addTrigger() {
+            const trigger = document.getElementById('trigger-key').value;
+            const response = document.getElementById('trigger-resp').value;
+            if (!trigger || !response) return toast('Please fill all fields', 'error');
+
+            try {
+                toast('Adding trigger...', 'warn');
+                await apiFetch('/api/triggers', {
+                    method: 'POST',
+                    body: JSON.stringify({ trigger, response })
+                });
+                toast('Trigger added!', 'ok');
+                document.getElementById('trigger-key').value = '';
+                document.getElementById('trigger-resp').value = '';
+                refreshTriggers();
+            } catch (err) { toast('Failed to add trigger', 'error'); }
+        }
+
+        async function deleteTrigger(id) {
+            // Implementation for delete if needed, for now just a placeholder
+            toast('Delete functionality pending backend endpoint', 'info');
+        }
+
+        function initDashboard() {
+            // Attach nav click listeners
+            document.querySelectorAll('.nav-item').forEach(n => {
+                n.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = n.dataset.page;
+                    navigate(page);
+                });
+            });
+
+            // Navigate to the correct page from URL hash
+            const hash = window.location.hash.replace('#', '');
+            navigate(hash || 'overview', false);
+
+            setInterval(refreshStats, 5000);
+            setInterval(refreshLogs, 3000);
+            refreshStats();
+            refreshLogs();
+            refreshMembers();
+            refreshRoles();
+            refreshChannels();
+            refreshCommands();
+            refreshModlogs();
+            refreshHistory();
+            refreshTriggers();
+
+            bindInteractivity();
+        }
+
+        async function refreshHistory() {
+            try {
+                const data = await apiFetch('/api/history');
+                if (!data) return;
+
+                // Growth Chart
+                const growthContainer = document.querySelector('[data-page="analytics"] .grid .card:first-child div[style*="height:200px"]');
+                if (growthContainer) {
+                    growthContainer.innerHTML = '';
+                    const max = Math.max(...data.growth, 1);
+                    data.growth.forEach(val => {
+                        const bar = document.createElement('div');
+                        bar.className = 'growth-bar';
+                        bar.style.width = '100%';
+                        bar.style.height = `${(val / max) * 100}%`;
+                        bar.style.background = 'var(--accent)';
+                        bar.style.borderRadius = '2px 2px 0 0';
+                        bar.style.opacity = '0.7';
+                        bar.title = `${val} members`;
+                        growthContainer.appendChild(bar);
+                    });
+                }
+
+                // Heatmap
+                const heatmapContainer = document.querySelector('.heatmap');
+                if (heatmapContainer) {
+                    heatmapContainer.innerHTML = '';
+                    data.heatmap.forEach(val => {
+                        const cell = document.createElement('div');
+                        cell.className = 'heat-cell';
+                        cell.style.opacity = val;
+                        if (val > 0.5) cell.style.background = 'var(--accent)';
+                        heatmapContainer.appendChild(cell);
+                    });
+                }
+
+                // Top Channels (Overview)
+                const channelTitle = Array.from(document.querySelectorAll('.card-head h2')).find(h2 => h2.textContent.includes('Top channels'));
+                if (channelTitle) {
+                    const card = channelTitle.closest('.card');
+                    const rows = card.querySelectorAll('.chart-bar-row');
+                    rows.forEach(r => r.remove()); // Clear old rows
+
+                    const maxCount = Math.max(...data.topChannels.map(c => c.count), 1);
+                    data.topChannels.forEach(c => {
+                        const row = document.createElement('div');
+                        row.className = 'chart-bar-row';
+                        row.innerHTML = `
+                            <span>#${c.name}</span>
+                            <div class="chart-bar-track">
+                                <div class="chart-bar-fill" style="width:${(c.count / maxCount) * 100}%"></div>
+                            </div>
+                            <span class="chart-num">${c.count.toLocaleString()}</span>
+                        `;
+                        card.appendChild(row);
+                    });
+                }
+            } catch (err) { console.error('Failed to fetch history:', err); }
+        }
+
+        async function refreshStats() {
+            try {
+                const stats = await apiFetch('/api/stats');
+                if (!stats) return;
+
+                const updateEl = (id, val) => {
+                    const el = document.getElementById(id);
+                    if (el && el.textContent !== val) {
+                        el.style.opacity = '0';
+                        setTimeout(() => {
+                            el.textContent = val;
+                            el.style.opacity = '1';
+                        }, 200);
+                    }
+                };
+
+                updateEl('stat-members', stats.members?.toLocaleString() || '0');
+                updateEl('stat-members-delta', `+${stats.newMembersToday || 0} today`);
+                updateEl('stat-uptime', formatUptime(stats.uptime));
+                updateEl('stat-guilds', stats.guilds);
+                updateEl('stat-status', stats.online ? 'Online' : 'Offline');
+
+                const summary = document.getElementById('overview-summary');
+                if (summary) summary.textContent = `Bot is ${stats.online ? 'online' : 'offline'} across ${stats.guilds} servers with ${stats.members?.toLocaleString()} members.`;
+
+                // Update stats page boxes
+                updateEl('stats-messages', stats.totalMessages?.toLocaleString() || '0');
+                updateEl('stats-new-members', stats.newMembersToday || '0');
+                updateEl('stats-active-users', stats.activeUsers || '0');
+                updateEl('stats-commands', stats.totalCommands?.toLocaleString() || '0');
+
+                // Update prefix input
+                const prefixInput = document.querySelector('[data-page="config"] .input.mono');
+                if (prefixInput && prefixInput.value !== stats.prefix) {
+                    prefixInput.value = stats.prefix;
+                }
+
+                // Update sidebar server info
+                updateEl('server-members', stats.guildMembers.toLocaleString() + ' members');
+                updateEl('server-name', stats.guildName);
+            } catch (err) { console.error('Stats refresh failed:', err); }
+        }
+
+        function formatUptime(seconds) {
+            if (!seconds) return '0h 0m';
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            return `${h}h ${m}m`;
+        }
+
+        async function refreshLogs() {
+            try {
+                const logs = await apiFetch('/api/logs');
+                const consoleEl = document.getElementById('console');
+                if (!consoleEl) return;
+
+                const isAtBottom = consoleEl.scrollHeight - consoleEl.clientHeight <= consoleEl.scrollTop + 50;
+
+                consoleEl.innerHTML = '';
+                logs.forEach(log => {
+                    const line = document.createElement('div');
+                    line.className = 'log-line';
+                    line.innerHTML = `<span class="log-time">${log.time}</span><span class="log-level ${log.level.toLowerCase()}">${log.level}</span><span class="log-msg">${log.msg}</span>`;
+                    consoleEl.appendChild(line);
+                });
+
+                if (isAtBottom) {
+                    consoleEl.scrollTop = consoleEl.scrollHeight;
+                }
+            } catch (err) { console.error('Logs refresh failed:', err); }
+        }
+
+        function pulseConsole() {
+            toast('Refreshing dashboard...', 'ok');
+            refreshStats();
+            refreshLogs();
+        }
+
+        function navigate(name, push = true) {
+            const pages = document.querySelectorAll('.page');
+            const navItems = document.querySelectorAll('.nav-item');
+
+            let found = false;
+            pages.forEach(p => {
+                const isMatch = p.dataset.page === name;
+                if (isMatch) {
+                    p.classList.add('active');
+                    found = true;
+                } else {
+                    p.classList.remove('active');
+                }
+            });
+
+            navItems.forEach(n => n.classList.toggle('active', n.dataset.page === name));
+
+            const crumb = document.getElementById('crumb');
+            if (crumb) crumb.textContent = name.charAt(0).toUpperCase() + name.slice(1);
+
+            if (push) history.replaceState(null, '', '#' + name);
+
+            if (!found && name !== 'overview') {
+                navigate('overview', false);
+            }
+        }
+
+
+        // Initialization on Load
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            if (code) {
+                handleCallback(code);
+            } else {
+                checkAuth();
+            }
+        };
+
+        // --- REAL DATA FETCHING ---
+        async function refreshMembers() {
+            try {
+                const members = await apiFetch('/api/members');
+                const tbody = document.getElementById('members-list');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+
+                // Update chips
+                if (document.getElementById('chip-all')) {
+                    document.getElementById('chip-all').textContent = members.length;
+                    document.getElementById('chip-bots').textContent = members.filter(m => m.bot).length;
+                    document.getElementById('chip-online').textContent = Math.floor(members.length * 0.25); // Placeholder for real online status
+                }
+                members.forEach(m => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <div class="user-pill">
+                                <div class="avatar" style="background: var(--accent)">
+                                    ${m.avatar ? `<img src="${m.avatar}" style="width:100%;height:100%;border-radius:50%">` : m.username.substring(0, 2).toUpperCase()}
+                                </div>
+                                <div>
+                                    <div class="uname">${m.username} ${m.bot ? '<span class="role-chip" style="font-size:9px;padding:1px 4px;margin-left:4px">BOT</span>' : ''}</div>
+                                    <div class="uhandle">${m.tag} &middot; ${m.id}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${m.roles.slice(0, 3).map(r => `<span class="role-pill" style="--role-color: ${r.color !== '#000000' ? r.color : 'var(--fg-dim)'}">${r.name}</span>`).join(' ')}${m.roles.length > 3 ? ` <span class="role-pill">+${m.roles.length - 3}</span>` : ''}</td>
+                        <td class="mono" style="font-size:12px">${new Date(m.joinedAt).toLocaleDateString()}</td>
+                        <td><span style="color:var(--ok); font-size:12px" class="mono">--</span></td>
+                        <td style="text-align:right"><button class="btn sm ghost" onclick="manageMember('${m.id}', '${m.username}')">Manage</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) { console.error('Failed to fetch members:', err); }
+        }
+
+        async function refreshRoles() {
+            try {
+                const roles = await apiFetch('/api/roles');
+                const tbody = document.getElementById('roles-list');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+                roles.forEach(r => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><span class="role-pill" style="--role-color: ${r.color !== '#000000' ? r.color : 'var(--fg-dim)'}">${r.name}</span></td>
+                        <td class="mono num">${r.members}</td>
+                        <td style="font-size:12px; color:var(--fg-dim)">Pos: ${r.position} ${r.hoist ? '(Hoisted)' : ''}</td>
+                        <td>
+                            <div style="width:18px; height:18px; border-radius:4px; background: ${r.color !== '#000000' ? r.color : 'var(--bg-elev-3)'}"></div>
+                        </td>
+                        <td style="text-align:right"><button class="btn sm ghost" onclick="editRole('${r.id}', '${r.name}')">Edit</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) { console.error('Failed to fetch roles:', err); }
+        }
+
+        async function refreshChannels() {
+            try {
+                const channels = await apiFetch('/api/channels');
+                const list = document.getElementById('channels-list');
+                const select = document.getElementById('message-channel-select');
+                if (!list || !select) return;
+
+                list.innerHTML = '';
+                select.innerHTML = '<option value="">Select a channel...</option>';
+
+                // Sort by position
+                channels.sort((a, b) => a.position - b.position);
+
+                const categories = channels.filter(c => c.type === 4);
+                const textChannels = channels.filter(c => c.type === 0);
+                const voiceChannels = channels.filter(c => c.type === 2);
+
+                const getIcon = (type) => {
+                    if (type === 0) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>`;
+                    if (type === 2) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
+                    return '';
+                };
+
+                const renderChannel = (c) => {
+                    if (c.type === 0) select.innerHTML += `<option value="${c.id}">#${c.name}</option>`;
+                    return `<div class="ch-item">${getIcon(c.type)} ${c.name}</div>`;
+                };
+
+                categories.forEach(cat => {
+                    list.innerHTML += `<div class="ch-cat">${cat.name.toUpperCase()}</div>`;
+                    const children = channels.filter(c => c.parentId === cat.id && (c.type === 0 || c.type === 2));
+                    children.forEach(c => {
+                        list.innerHTML += renderChannel(c);
+                    });
+                });
+
+                // Uncategorized
+                const uncategorized = channels.filter(c => !c.parentId && (c.type === 0 || c.type === 2));
+                if (uncategorized.length > 0) {
+                    list.innerHTML += `<div class="ch-cat">UNCATEGORIZED</div>`;
+                    uncategorized.forEach(c => {
+                        list.innerHTML += renderChannel(c);
+                    });
+                }
+            } catch (err) { console.error('Failed to fetch channels:', err); }
+        }
+
+        async function refreshCommands() {
+            try {
+                const data = await apiFetch('/api/commands');
+                const list = document.getElementById('commands-list');
+                if (!list) return;
+                list.innerHTML = '';
+
+                document.querySelector('[data-page="commands"] .chip.active .count').textContent = data.slash.length + data.prefix.length;
+
+                data.slash.forEach(cmd => {
+                    list.innerHTML += `
+                        <div class="cmd-card">
+                            <div>
+                            <div class="cmd-usage">-- uses &middot; 7d</div><button class="btn sm" onclick="editCommand('${cmd.name}', 'slash')">Edit</button>
+                        </div>
+                    `;
+                });
+                data.prefix.forEach(cmd => {
+                    list.innerHTML += `
+                        <div class="cmd-card">
+                            <div>
+                                <div class="cmd-name">,${cmd.name} <span class="role-chip" style="font-size:9px;padding:1px 4px;margin-left:4px">Prefix</span></div>
+                                <div class="cmd-desc">${cmd.description}</div>
+                            </div>
+                            <div class="cmd-usage">Aliases: ${cmd.aliases.join(', ') || 'None'}</div><button class="btn sm" onclick="editCommand('${cmd.name}', 'prefix')">Edit</button>
+                        </div>
+                    `;
+                });
+            } catch (err) { console.error('Failed to fetch commands:', err); }
+        }
+
+        async function refreshModlogs() {
+            try {
+                const logs = await apiFetch('/api/modlogs');
+                const list = document.getElementById('modlog-list');
+                const overviewFeed = document.querySelector('[data-page="overview"] .card:nth-child(2) div:not(.card-head)');
+
+                if (list) list.innerHTML = '';
+                if (overviewFeed) overviewFeed.innerHTML = '';
+
+                logs.forEach((log, index) => {
+                    const actionMap = { 20: 'Kicked', 22: 'Banned', 23: 'Unbanned', 24: 'Kicked', 40: 'Channel Created', 41: 'Channel Updated', 42: 'Channel Deleted' };
+                    const actionStr = actionMap[log.action] || `Action ${log.action}`;
+                    const timeStr = new Date(log.createdAt).toLocaleString();
+                    const relativeTime = formatRelativeTime(new Date(log.createdAt));
+
+                    const html = `
+                        <div class="feed-item">
+                            <div class="feed-icon ${log.action === 22 ? 'ban' : 'warn'}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            </div>
+                            <div class="feed-content">
+                                <div class="feed-title"><b>${log.executor ? log.executor.tag : 'System'}</b> ${actionStr} <b>${log.target ? log.target.tag || log.target.username : 'Unknown'}</b></div>
+                                <div class="feed-time">${relativeTime} &middot; ${log.reason || 'No reason'}</div>
+                            </div>
+                        </div>
+                    `;
+
+                    if (list) list.innerHTML += html;
+                    if (overviewFeed && index < 5) overviewFeed.innerHTML += html;
+                });
+            } catch (err) { console.error('Failed to fetch modlogs:', err); }
+        }
+
+        function formatRelativeTime(date) {
+            const diff = (new Date() - date) / 1000;
+            if (diff < 60) return 'Just now';
+            if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+            return date.toLocaleDateString();
+        }
+
+        async function sendMessage() {
+            const channelId = document.getElementById('message-channel-select').value;
+            const content = document.getElementById('msg-body').value;
+
+            if (!channelId) {
+                toast('Please select a channel', 'error');
+                return;
+            }
+            if (!content.trim()) {
+                toast('Message cannot be empty', 'error');
+                return;
+            }
+
+            try {
+                await apiFetch('/api/message', {
+                    method: 'POST',
+                    body: JSON.stringify({ channelId, content })
+                });
+                toast('Message sent to channel', 'ok');
+                document.getElementById('msg-body').value = '';
+            } catch (err) {
+                toast('Failed to send message', 'error');
+                console.error(err);
+            }
+        }
+
+        async function savePrefix() {
+            const prefix = document.querySelector('[data-page="config"] .input.mono').value;
+            try {
+                await apiFetch('/api/config', {
+                    method: 'POST',
+                    body: JSON.stringify({ prefix })
+                });
+                toast(`Prefix updated to: ${prefix}`, 'ok');
+            } catch (err) {
+                toast('Failed to update prefix', 'error');
+            }
+        }
+
+        async function sendBroadcast() {
+            const content = document.getElementById('broadcast-msg').value;
+            const isEmbed = document.getElementById('broadcast-embed').checked;
+
+            if (!content.trim()) return toast('Please enter a message', 'error');
+
+            try {
+                await apiFetch('/api/broadcast', {
+                    method: 'POST',
+                    body: JSON.stringify({ content, isEmbed })
+                });
+                toast('Broadcast sent to all channels!', 'ok');
+                document.getElementById('broadcast-msg').value = '';
+            } catch (err) {
+                toast('Broadcast failed', 'error');
+            }
+        }
+
+        // --- INTERACTIVE ACTIONS ---
+        async function manageMember(id, name) {
+            const action = prompt(`Manage Member: ${name}\nActions: KICK, BAN, TIMEOUT\n(Enter action name)`);
+            if (!action) return;
+
+            const upperAction = action.toUpperCase();
+            if (!['KICK', 'BAN', 'TIMEOUT'].includes(upperAction)) {
+                return toast('Invalid action', 'error');
+            }
+
+            const reason = prompt(`Reason for ${upperAction}:`) || 'No reason provided';
+
+            try {
+                toast(`Executing ${upperAction} on ${name}...`, 'warn');
+                await apiFetch('/api/members/action', {
+                    method: 'POST',
+                    body: JSON.stringify({ userId: id, action: upperAction, reason })
+                });
+                toast(`${upperAction} successful`, 'ok');
+                refreshMembers();
+            } catch (err) {
+                toast(`Failed to execute ${upperAction}`, 'error');
+            }
+        }
+
+        function editRole(id, name) {
+            toast(`Role Editor for "${name}" - Implementation pending`, 'info');
+        }
+
+        function editCommand(name, type) {
+            toast(`Command Editor for "${name}" (${type}) - Implementation pending`, 'info');
+        }
+
+        function changeServer() {
+            showGuildSelector();
+        }
+
+        // Initialization on Load
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            if (code) {
+                handleCallback(code);
+            } else {
+                checkAuth();
+            }
+
+            // Bind change server button if exists
+            const serverNameEl = document.getElementById('server-name');
+            if (serverNameEl) {
+                serverNameEl.style.cursor = 'pointer';
+                serverNameEl.onclick = changeServer;
+                serverNameEl.title = "Click to change server";
+            }
+        };
+
+    </script>
+</body>
+
+</html>
